@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,10 +12,12 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Website.Models;
 using Website.ViewModels;
+using Database = Website.Models.Database;
 
 namespace Website.Controllers
 {
     [RoutePrefix("User")]
+    [Authorize]
     public class UserController : Controller
     {
         public UserController()
@@ -61,13 +64,7 @@ namespace Website.Controllers
             }
             return View(vm);
         }
-        
-        [Route("Register")]
-        public ActionResult Register()
-        {
-            return View();
-        }
-        
+
         [Route("LogOff")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -76,7 +73,51 @@ namespace Website.Controllers
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }
+        
+        [AllowAnonymous]
+        [Route("Register")]
+        public ActionResult Register()
+        {
+            return View();
+        }
 
+        [Route("Register")]
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check if the invite code is valid
+                using (var db = new Database())
+                {
+                    // Check to make sure the key is valid.
+                    var matchingKey = await (from key in db.InviteKeys
+                                     where key.Key == vm.InviteKey
+                                     select key).ToListAsync();
+                    if (matchingKey.Any())
+                    {
+                        var user = vm.ToUser();
+                        user.Invite = matchingKey.First();
+                        var result = await UserManager.CreateAsync(user, vm.Password);
+                        if (result.Succeeded)
+                        {
+                            await SignInAsync(user, isPersistent: false);
+                            return RedirectToAction("Index", "Home");
+                        }
+                        AddErrors(result);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("InviteKey", "Invite key is not recognized.");                        
+                    }
+                }
+            }
+
+            return View(vm);
+        }
+        
         [Route("Manage")]
         public ActionResult Manage()
         {
@@ -96,6 +137,14 @@ namespace Website.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             var identity = await UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
             AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error);
+            }
         }
 	}
 }
