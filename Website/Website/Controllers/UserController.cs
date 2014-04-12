@@ -12,7 +12,6 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Website.Models;
 using Website.ViewModels;
-using Database = Website.Models.Database;
 
 namespace Website.Controllers
 {
@@ -21,8 +20,14 @@ namespace Website.Controllers
     public class UserController : Controller
     {
         public UserController()
-            : this(new UserManager<User>(new UserStore<User>(new UserDbContext())))
+            : this(new DatabaseContext())
         {
+        }
+
+        public UserController(DatabaseContext context)
+            : this(new UserManager<User>(new UserStore<User>(context)))
+        {
+            DbContext = context;
         }
 
         public UserController(UserManager<User> userManager)
@@ -32,6 +37,8 @@ namespace Website.Controllers
 
 
         public UserManager<User> UserManager { get; private set; }
+
+        private DatabaseContext DbContext { get; set; }
 
         [Route("Login")]
         [AllowAnonymous]
@@ -90,31 +97,27 @@ namespace Website.Controllers
             if (ModelState.IsValid)
             {
                 // Check if the invite code is valid
-                using (var db = new Database())
+                // Check to make sure the key is valid.
+                var matchingKey = await (from key in DbContext.InviteKeys
+                    where key.Key == vm.InviteKey
+                    select key).ToListAsync();
+                if (matchingKey.Any())
                 {
-                    // Check to make sure the key is valid.
-                    var matchingKey = await (from key in db.InviteKeys
-                                     where key.Key == vm.InviteKey
-                                     select key).ToListAsync();
-                    if (matchingKey.Any())
+                    var user = vm.ToUser();
+                    user.Invite = matchingKey.First();
+                    var result = await UserManager.CreateAsync(user, vm.Password);
+                    if (result.Succeeded)
                     {
-                        var user = vm.ToUser();
-                        user.Invite = matchingKey.First();
-                        var result = await UserManager.CreateAsync(user, vm.Password);
-                        if (result.Succeeded)
-                        {
-                            await SignInAsync(user, isPersistent: false);
-                            return RedirectToAction("Index", "Home");
-                        }
-                        AddErrors(result);
+                        await SignInAsync(user, isPersistent: false);
+                        return RedirectToAction("Index", "Home");
                     }
-                    else
-                    {
-                        ModelState.AddModelError("InviteKey", "Invite key is not recognized.");                        
-                    }
+                    AddErrors(result);
+                }
+                else
+                {
+                    ModelState.AddModelError("InviteKey", "Invite key is not recognized.");
                 }
             }
-
             return View(vm);
         }
         

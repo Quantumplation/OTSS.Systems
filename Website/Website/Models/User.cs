@@ -6,12 +6,4 @@ namespace Website.Models
     {
         public InviteKey Invite { get; set; }
     }
-
-    public class UserDbContext : IdentityDbContext<User>
-    {
-        public UserDbContext()
-            : base("Azure")
-        {
-        }
-    }
 }

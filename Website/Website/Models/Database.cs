@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Website.Models
 {
-    public class Database : DbContext
+    public class DatabaseContext : IdentityDbContext<User>
     {
-        public Database()
+        public DatabaseContext()
             : base("Azure")
         {
             

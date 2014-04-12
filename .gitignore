@@ -137,6 +137,19 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 
+#Web Essentials
+WebEssentials-Settings.json
+Website/Website/Scripts/jquery-2.1.0.intellisense.js
+Website/Website/Scripts/jquery-2.1.0.js
+Website/Website/Scripts/jquery-2.1.0.min.js
+Website/Website/Scripts/jquery-2.1.0.min.map
+Website/Website/Scripts/modernizr-2.7.2.js
+Website/Website/Scripts/respond.matchmedia.*
+Website/Website/Content/bootstrap-theme.css
+Website/Website/Content/bootstrap-theme.css.map
+Website/Website/Content/bootstrap-theme.min.css
+Website/Website/Content/bootstrap.css.map
+
 # =========================
 # Windows detritus
 # =========================

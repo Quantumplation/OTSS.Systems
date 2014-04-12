@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30324.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{8334C40E-0C9E-4D49-B900-C4FA2E42150A}"
 EndProject
@@ -16,6 +16,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configurations", "Configurations", "{164366C8-5CEB-41F8-98FD-ADF3E5CD19B4}"
 	ProjectSection(SolutionItems) = preProject
 		PublishScripts\Configurations\Website-WAWS-dev.json = PublishScripts\Configurations\Website-WAWS-dev.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{937ACD3A-EC3F-4D5B-9462-2D4A31722216}"
+	ProjectSection(SolutionItems) = preProject
+		WebEssentials-Settings.json = WebEssentials-Settings.json
 	EndProjectSection
 EndProject
 Global
