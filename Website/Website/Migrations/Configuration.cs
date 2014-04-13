@@ -1,3 +1,4 @@
+using System.Web.Helpers;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Website.Models;
@@ -21,21 +22,13 @@ namespace Website.Migrations
         {
             var adminUser = new User
             {
-                UserName = "Quantumplation",
+                UserName = "Admin",
                 Email = "pi.lanningham@nyu.edu",
                 EmailConfirmed = true,
             };
 
-            var rob = new User
-            {
-                UserName = "Rob",
-                Email = "rob@kelle.tt",
-                EmailConfirmed = true,
-            };
-
             var manager = new UserManager<User>(new UserStore<User>(new Website.Models.DatabaseContext()));
-            manager.Create(adminUser, "password");
-            manager.Create(rob, "password");
+            manager.Create(adminUser, Crypto.SHA256("password"));
         }
     }
 }
