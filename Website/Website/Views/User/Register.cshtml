@@ -6,7 +6,20 @@
 
 <h2>@ViewBag.Title.</h2>
 
-@using (Html.BeginForm("Register", "User", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+<script src="~/Scripts/sha256.js"></script>
+<script>
+    @* Client side hashing *@
+    function hash() {
+        var pw = $("#pwField").val();
+        var cpw = $("#pwConfirm").val();
+        var pwSHA = new jsSHA(pw, "TEXT");
+        var confirmSHA = new jsSHA(cpw, "TEXT");
+        $("#pwField").val(pwSHA.getHash("SHA-256", "HEX"));
+        $("#pwConfirm").val(confirmSHA.getHash("SHA-256", "HEX"));
+    }
+</script>
+
+@using (Html.BeginForm("Register", "User", FormMethod.Post, new { @class = "form-horizontal", role = "form", onsubmit="hash()" }))
 {
     @Html.AntiForgeryToken()
     <h4>Create a new account.</h4>
@@ -21,13 +34,13 @@
     <div class="form-group">
         @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.PasswordFor(m => m.Password, new { id = "pwField", @class = "form-control" })
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            @Html.PasswordFor(m => m.ConfirmPassword, new { id = "pwConfirm", @class = "form-control" })
         </div>
     </div>
     <div class="form-group">
