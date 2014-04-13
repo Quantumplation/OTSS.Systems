@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
@@ -124,7 +125,31 @@ namespace Website.Controllers
         [Route("Manage")]
         public ActionResult Manage()
         {
-            return new EmptyResult();
+            return View();
+        }
+
+        [Route("Manage")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Manage(ManageUserViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), vm.OldPassword, vm.NewPassword);
+                if (result.Succeeded)
+                {
+                    var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                    await SignInAsync(user, isPersistent: false);
+                    ViewBag.StatusMessage = "Password changed successfully!";
+                    return View();
+                }
+                else
+                {
+                    AddErrors(result);
+                }
+            }
+            ViewBag.StatusMessage = "An error occured.";
+            return View();
         }
 
         private IAuthenticationManager AuthenticationManager
