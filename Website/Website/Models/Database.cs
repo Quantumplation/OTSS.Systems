@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
@@ -10,7 +11,7 @@ namespace Website.Models
     public class DatabaseContext : IdentityDbContext<User>
     {
         public DatabaseContext()
-            : base("Azure")
+            : base(ConfigurationManager.AppSettings["CurrentConnectionString"])
         {
             
         }

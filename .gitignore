@@ -151,6 +151,9 @@ Website/Website/Content/bootstrap-theme.css.map
 Website/Website/Content/bootstrap-theme.min.css
 Website/Website/Content/bootstrap.css.map
 
+#Connection Strings
+ConnectionStrings.config
+
 # =========================
 # Windows detritus
 # =========================
