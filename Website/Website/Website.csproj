@@ -152,6 +152,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\API\QuotesApi.cs" />
+    <Compile Include="Controllers\API\UsersApi.cs" />
     <Compile Include="Controllers\Web\QuotesController.cs" />
     <Compile Include="Controllers\Web\UserController.cs" />
     <Compile Include="Controllers\Web\HomeController.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\API\QuoteViewModel.cs" />
+    <Compile Include="ViewModels\API\UserViewModel.cs" />
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
     <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
