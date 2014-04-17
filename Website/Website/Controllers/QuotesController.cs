@@ -12,6 +12,7 @@ using System.Data.Entity;
 namespace Website.Controllers
 {
     [RoutePrefix("Quotes")]
+    [Authorize]
     public class QuotesController : Controller
     {
         [Route("")]
