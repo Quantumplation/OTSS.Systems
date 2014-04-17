@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Website.Models;
 
-namespace Website.ViewModels.Quotes
+namespace Website.ViewModels.Web
 {
     public class QuoteListViewModel
     {

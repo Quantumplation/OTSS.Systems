@@ -12,7 +12,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Website.Models;
-using Website.ViewModels;
+using Website.ViewModels.Web;
 
 namespace Website.Controllers
 {

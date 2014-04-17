@@ -151,9 +151,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\QuotesController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\API\QuotesApi.cs" />
+    <Compile Include="Controllers\Web\QuotesController.cs" />
+    <Compile Include="Controllers\Web\UserController.cs" />
+    <Compile Include="Controllers\Web\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -175,14 +176,15 @@
     <Compile Include="Models\Quote.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\Quotes\QuoteListViewModel.cs" />
-    <Compile Include="ViewModels\Quotes\TagViewModel.cs" />
-    <Compile Include="ViewModels\Users\ManageUserViewModel.cs" />
-    <Compile Include="ViewModels\Users\LoginViewModel.cs" />
+    <Compile Include="ViewModels\API\QuoteViewModel.cs" />
+    <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
+    <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
+    <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
+    <Compile Include="ViewModels\Web\Users\LoginViewModel.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\Quotes\QuoteViewModel.cs" />
-    <Compile Include="ViewModels\Users\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\Web\Quotes\QuoteViewModel.cs" />
+    <Compile Include="ViewModels\Web\Users\RegisterViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -234,7 +236,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Areas\" />
     <Folder Include="Providers\" />
     <Folder Include="Results\" />
   </ItemGroup>

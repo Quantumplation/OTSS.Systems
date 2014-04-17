@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using Newtonsoft.Json.Serialization;
 
@@ -15,6 +16,8 @@ namespace Website
 
             // Web API routes
             config.MapHttpAttributeRoutes();
+
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
         }
     }
 }

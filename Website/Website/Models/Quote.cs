@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Newtonsoft.Json;
 
 namespace Website.Models
 {
@@ -14,6 +15,8 @@ namespace Website.Models
         public string AlternateAuthor { get; set; }
         public User Submitter { get; set; }
         public DateTime CreatedAt { get; set; }
+
+        [JsonIgnore]
         public virtual ICollection<Tag> Tags { get; set; } 
     }
 }

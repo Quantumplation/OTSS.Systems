@@ -2,7 +2,7 @@
 using System.Linq;
 using Website.Models;
 
-namespace Website.ViewModels.Quotes
+namespace Website.ViewModels.Web
 {
     public class QuoteViewModel
     {

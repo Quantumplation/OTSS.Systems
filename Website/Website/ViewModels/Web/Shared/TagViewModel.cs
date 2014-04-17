@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using Website.Models;
 
-namespace Website.ViewModels.Quotes
+namespace Website.ViewModels.Web
 {
     public class TagViewModel
     {
