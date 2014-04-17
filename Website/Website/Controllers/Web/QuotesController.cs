@@ -41,7 +41,7 @@ namespace Website.Controllers
                 var quote = new Quote
                 {
                     Text = vm.Text,
-                    Submitter = dbContext.Users.Find(User.Identity.Name),
+                    Submitter = dbContext.Users.Single(u => u.UserName == User.Identity.Name),
                     CreatedAt = DateTime.Now,
                     Tags = new List<Tag>()
                 };
