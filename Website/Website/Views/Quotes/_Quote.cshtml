@@ -1,0 +1,14 @@
+﻿@model Website.ViewModels.Quotes.QuoteViewModel
+<div class="quote" style="border-width:1px;border-color:black;border-style:solid;padding:3px;">
+    @Model.Text
+    <br />
+    - @Model.Author
+    <br />
+    Tags:
+    @foreach (var tag in Model.Tags)
+    {
+        <span style="border-width:1px;border-color:black;border-style:solid;padding:3px;">@tag.Text</span>
+    }
+</div>
+
+

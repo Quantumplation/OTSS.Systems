@@ -1,0 +1,38 @@
+﻿@using Website.ViewModels.Quotes
+@model Website.ViewModels.Quotes.QuoteListViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+All Tags:
+@foreach (var tag in Model.Tags)
+{
+    <span style="border-width:1px;border-color:black;border-style:solid;padding:3px;">@tag.Text</span>
+}
+<br />
+Quotes:
+<br />
+<div class="quotes">
+    @foreach (var quote in Model.Quotes)
+    {
+        @Html.Partial("_Quote", quote)
+    }
+</div>
+
+@Html.Partial("_NewQuote", new QuoteViewModel())
+
+
+@section scripts
+{
+    <script>
+        $("#newQuoteForm").submit(function (event) {
+            event.preventDefault();
+
+            $.post('@Url.Action("NewQuote")', $(this).serialize(), function (data, textStatus, jqXHR) {
+                    $(".quotes").append(data);
+                });
+        });
+    </script>
+}

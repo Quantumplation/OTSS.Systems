@@ -17,5 +17,7 @@ namespace Website.Models
         }
 
         public DbSet<InviteKey> InviteKeys { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<Quote> Quotes { get; set; }
     }
 }

@@ -151,6 +151,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\QuotesController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -164,16 +165,24 @@
     <Compile Include="Migrations\201404111700577_InviteKeys.Designer.cs">
       <DependentUpon>201404111700577_InviteKeys.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201404150106127_QuotesAndTags.cs" />
+    <Compile Include="Migrations\201404150106127_QuotesAndTags.Designer.cs">
+      <DependentUpon>201404150106127_QuotesAndTags.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\InviteKey.cs" />
+    <Compile Include="Models\Quote.cs" />
+    <Compile Include="Models\Tag.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\ManageUserViewModel.cs" />
-    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\Quotes\QuoteListViewModel.cs" />
+    <Compile Include="ViewModels\Quotes\TagViewModel.cs" />
+    <Compile Include="ViewModels\Users\ManageUserViewModel.cs" />
+    <Compile Include="ViewModels\Users\LoginViewModel.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\RegisterViewModel.cs" />
-    <Compile Include="ViewModels\UserListViewModel.cs" />
+    <Compile Include="ViewModels\Quotes\QuoteViewModel.cs" />
+    <Compile Include="ViewModels\Users\RegisterViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -189,6 +198,8 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -217,6 +228,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\User\Manage.cshtml" />
     <Content Include="Views\User\_ChangePasswordPartial.cshtml" />
+    <Content Include="Views\Quotes\Index.cshtml" />
+    <Content Include="Views\Quotes\_NewQuote.cshtml" />
+    <Content Include="Views\Quotes\_Quote.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -237,6 +251,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201404111700577_InviteKeys.resx">
       <DependentUpon>201404111700577_InviteKeys.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201404150106127_QuotesAndTags.resx">
+      <DependentUpon>201404150106127_QuotesAndTags.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

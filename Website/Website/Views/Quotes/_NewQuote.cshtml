@@ -1,0 +1,12 @@
+﻿@model Website.ViewModels.Quotes.QuoteViewModel
+
+@using (Html.BeginForm("NewQuote", "Quotes", FormMethod.Post, new { Id = "newQuoteForm" }))
+{
+    <div>
+        @Html.LabelFor(m => m.Text, "Text:")
+        @Html.TextBoxFor(m => m.Text)
+        @Html.LabelFor(m => m.Author, "Author:")
+        @Html.TextBoxFor(m => m.Author)
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+}
