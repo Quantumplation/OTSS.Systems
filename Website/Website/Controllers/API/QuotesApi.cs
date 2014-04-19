@@ -11,6 +11,7 @@ using Website.ViewModels.API;
 namespace Website.Controllers.API
 {
     [RoutePrefix("api/Quotes")]
+    [ApiAuthorize]
     public class QuotesController : ApiController
     {
         [HttpGet]
