@@ -1,18 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Security.Claims;
-using System.Web;
 using System.Web.Http;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.Cookies;
 using Website.Models;
 using Website.ViewModels.API;
-using Website.ViewModels.Web;
 
 namespace Website.Controllers.API
 {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Website.Models;
 
 namespace Website.ViewModels.Web
 {
