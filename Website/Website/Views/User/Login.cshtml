@@ -4,16 +4,6 @@
     Layout = "../Shared/_Layout.cshtml";
 }
 
-<script src="~/Scripts/sha256.js"></script>
-<script>
-    @* Client side hashing *@
-    function hash() {   
-        var pw = $("#pwField").val();
-        var pwSHA = new jsSHA(pw, "TEXT");
-        $("#pwField").val(pwSHA.getHash("SHA-256", "HEX"));
-    }
-</script>
-
 <h2>@ViewBag.Title.</h2>
 <div class="row">
     <div class="col-md-8">
@@ -60,4 +50,14 @@
 </div>
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Scripts/sha256.js"></script>
+    <script>
+        @* Client side hashing *@
+        function hash() {
+            var pw = $("#pwField").val();
+            var pwSHA = new jsSHA(pw, "TEXT");
+            $("#pwField").val(pwSHA.getHash("SHA-256", "HEX"));
+        }
+    </script>
 }
