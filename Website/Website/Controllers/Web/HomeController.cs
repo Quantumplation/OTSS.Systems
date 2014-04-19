@@ -12,5 +12,11 @@ namespace Website.Controllers
 
             return View();
         }
+
+        [Route("SignalRSample")]
+        public ActionResult SignalRSample()
+        {
+            return View();
+        }
     }
 }

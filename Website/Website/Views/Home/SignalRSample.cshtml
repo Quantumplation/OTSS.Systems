@@ -1,0 +1,32 @@
+﻿<h1>SignalR Demo</h1>
+I made this signalR page so you fucks don't pollute the quotes database trying out this feature.
+
+<div id="messages"></div><br />
+Viewer count: <p id ="viewerCount">0</p>
+Message: <input id="message" type="text"/> <input id="bootan" type="submit"/>
+
+@section scripts
+{
+    
+<script src="~/Scripts/jquery.signalR-2.0.3.min.js"></script>
+<script src="~/signalr/hubs"></script>
+<script>
+$(function() {
+    var sampleHub = $.connection.sampleHub;
+    sampleHub.client.broadcast = function (data) {
+        $("#messages").append(data + "<br/>");
+    };
+    sampleHub.client.updateViewerCount = function(count) {
+        $("#viewerCount").text(count);
+    };
+    $.connection.hub.start().done(function () {
+        $('#bootan').click(function () {
+            // Call the Send method on the hub. 
+            sampleHub.server.broadcast($('#message').val());
+            // Clear text box and reset focus for next comment. 
+            $('#message').val('').focus();
+        });
+    });
+});
+</script>
+}

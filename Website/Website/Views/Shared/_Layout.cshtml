@@ -25,7 +25,10 @@
                 @if (Request.IsAuthenticated)
                 {
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Quotes", "Index", "Quotes", new {area = ""}, null)</li>
+                        <li>@Html.ActionLink("Quotes", "Index", "Quotes", new { area = "" }, null)</li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("SignalR Sample", "SignalRSample", "Home", new { area = "" }, null)</li>
                     </ul>
                 }
                 @Html.Partial("_LoginPartial")
