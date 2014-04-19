@@ -52,6 +52,5 @@ namespace Website.Controllers.API
             }
             return q;
         }
-
     }
 }

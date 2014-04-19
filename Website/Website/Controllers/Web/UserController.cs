@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -84,6 +85,7 @@ namespace Website.Controllers
         {
             return View();
         }
+
 
         [Route("Register")]
         [HttpPost]

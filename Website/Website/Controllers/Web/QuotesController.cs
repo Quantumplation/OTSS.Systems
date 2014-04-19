@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Website.Hubs;
 using Website.Models;
 using Website.ViewModels.Web;
 using System.Data.Entity;
@@ -55,6 +56,7 @@ namespace Website.Controllers
                 dbContext.Quotes.Add(quote);
                 vm = new QuoteViewModel(quote);
                 await dbContext.SaveChangesAsync();
+                QuotesHub.NewQuote(quote);
             }
             return PartialView("_Quote", vm);
         }
