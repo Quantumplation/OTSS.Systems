@@ -24,6 +24,7 @@ namespace Website
                 TokenEndpointPath = new PathString("/api/Token"),
                 Provider = new ApplicationOAuthProvider("self"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
+                AllowInsecureHttp = true,
             };
 
             // Enable the application to use bearer tokens to authenticate users
