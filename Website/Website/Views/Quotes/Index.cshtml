@@ -28,6 +28,7 @@ Quotes:
 {
     <script src="~/Scripts/jquery.signalR-2.0.3.min.js"></script>
     <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/typeahead.jquery.js"></script>
     <script>
         $(function() {
             var quoteHub = $.connection.quotesHub;
@@ -35,12 +36,32 @@ Quotes:
                 $(".quotes").append(data);
             };
             $.connection.hub.start();
+
+
+            $(".typeahead").typeahead({
+                    minLength: 1,
+                    highlight: true,
+                }, {
+                    name: 'users',
+                    source: function(query, cb) {
+                        $.getJSON('/api/Users', null, function(result) {
+                            var results = [];
+                            for (var i in result) {
+                                var entry = result[i].UserName;
+                                if (entry.indexOf(query) > -1)
+                                    results.push({ value: entry });
+                            }
+                            cb(results);
+                        });
+                    }
+                }
+            );
         });
 
-        $("#newQuoteForm").submit(function (event) {
+        $("#newQuoteForm").submit(function(event) {
             event.preventDefault();
 
-            $.post('@Url.Action("NewQuote")', $(this).serialize(), function (data, textStatus, jqXHR) {
+            $.post('@Url.Action("NewQuote")', $(this).serialize(), function(data, textStatus, jqXHR) {
                 //$(".quotes").append(data);
             });
         });
