@@ -1,0 +1,159 @@
+﻿@import "variables.scss";
+
+@mixin rows($num) {
+    height: ($row-height + $row-gutter) * $num - $row-gutter;
+}
+
+@function col-width($num) {
+    @return ($col-width + $col-gutter) * $num - $col-gutter 
+}
+
+@mixin cols($num) {
+    width: col-width($num);
+    display: block;
+}
+
+@mixin cols-all-but($num) {
+    width: calc(100% - #{col-width($num) + ($col-gutter)});
+    display: block;
+}
+
+@mixin cols-min($num) {
+    min-width: col-width($num);
+}
+
+html, body {
+    margin: 0;
+    padding: 0 0 $row-gutter;
+}
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 (($col-width + $col-gutter) * $pad-col - $col-gutter);
+    font-size: 0;
+
+    .cell, .wrap {
+        margin-top: $row-gutter;
+        margin-left: $col-gutter;
+        font-size: $font-size;
+        float: left;
+    }
+
+    .wrap {
+        .cell, .wrap {
+            position: relative;
+            top: -$row-gutter;
+        }
+    }
+
+    .start-row {
+        margin-left: 0;
+    }
+
+    .fixed {
+        position: fixed;
+        z-index: 626;
+    }
+}
+
+@for $i from 1 through $max-rows {
+    .row-#{$i} {
+        @include rows($i);
+    }
+}
+
+.col-none {
+    display: none;
+}
+
+@for $i from 1 through $max-cols {
+    .col-#{$i} {
+        @include cols($i);
+    }
+
+    .col-min-#{$i} {
+        @include cols-min($i);
+    }
+
+    .col-all-but-#{$i} {
+        @include cols-all-but($i);
+    }
+}
+
+.col-all {
+    @include cols-all-but(0);
+}
+
+@for $i from $min-cols through $max-cols {
+    $min-width: col-width($i + $pad-col * 2);
+    $max-width: col-width($i + $pad-col * 2 + 1) - 1px;
+
+    $query: "(min-width: " + $min-width + ") and (max-width: " + $max-width + ")";
+    @if $i == $min-cols {
+        $query: "(max-width: " + $max-width + ")";
+    }
+    @if $i == $max-cols {
+        $query: "(min-width: " + $min-width + ")";
+    }
+
+    @media all and #{$query} {
+        // Context: "The screen can fit $i columns"
+
+        .container {
+            @if $i == $min-cols {
+                padding: 0;
+            }
+
+            width: col-width($i);
+        }
+
+        .col-max {
+            @include cols($i);
+        }
+
+        @for $j from $min-cols through $i {
+            .col-none-with-#{$j} {
+                display: none;
+            }
+
+            @for $k from 1 through $max-cols {
+                .col-#{$k}-with-#{$j} {
+                    @include cols($k);
+                }
+
+                .col-all-but-#{$k}-with-#{$j} {
+                    @include cols-all-but($k);
+                }
+            }
+
+            .col-all-with-#{$j} {
+                @include cols-all-but(0);
+            }
+
+            .start-row-with-#{$j} {
+                margin-left: 0;
+            }
+
+            .fixed-with-#{$j} {
+                position: fixed;
+            }
+            
+            .start-row-until-#{$j} {
+                margin-left: $col-gutter !important;
+            }
+
+            @for $i from 1 through $max-rows {
+                .row-#{$i}-with-#{$j} {
+                    @include rows($i);
+                }
+            }
+        }
+
+        @for $j from $i+1 through $max-cols {
+            .start-row-until-#{$j} {
+                margin-left: 0 !important;
+            }
+        }
+    }
+}

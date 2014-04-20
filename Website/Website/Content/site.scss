@@ -1,0 +1,48 @@
+﻿@import "variables.scss";
+
+#navbar-background {
+    background: black;
+    left: 0;
+    width: 100%;
+}
+
+#navbar, #navbar-background {
+    margin-top: 0 !important;
+    padding-top: $row-gutter;
+    color: white;
+}
+
+#navbar {
+    a {
+        &, &:visited, &:active, &:link {
+            color: white;
+            text-decoration: none;
+        }
+    }
+}
+
+/* TODO: everything below this line must go*/
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}

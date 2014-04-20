@@ -1,47 +1,39 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>@ViewBag.Title</title>
+        @Styles.Render("~/Content/css")
+    </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", null, new { @class = "navbar-brand" })
+    <div class="container">
+        <div id="navbar-background" class="fixed row-1"></div>
+        <div id="navbar" class="fixed wrap start-row col-max row-1">
+            <div class="cell start-row col-all-but-2 row-1">
+                <h1>@Html.ActionLink("Application name", "Index", "Home")</h1>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
-                </ul>
-                @if (Request.IsAuthenticated)
-                {
-                    <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Quotes", "Index", "Quotes", new {area = ""}, null)</li>
-                    </ul>
-                }
-                @Html.Partial("_LoginPartial")
+            @Html.Partial("_LoginPartial")
+        </div>
+        <div class="cell start-row col-none col-all-with-6 row-1"><!-- spacer --></div>
+
+        <div class="fixed-with-6 wrap start-row col-all row-1 col-1-with-6 row-5-with-6">
+            <div class="cell start-row col-all row-1"><!-- spacer --></div>
+            <div class="wrap start-row col-all row-1 col-1-with-6 row-4-with-6">
+                <div class="cell start-row col-all col-1-with-6 row-1">
+                    @Html.ActionLink("Quotes", "Index", "Quotes", new { area = "" }, null)
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+
+        <div class="cell start-row col-none row-4 col-1-with-6"></div>
+        <div class="wrap start-row-until-6 col-all col-all-but-1-with-6">
+            @RenderBody()
+        </div>
     </div>
 
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
+
 </html>

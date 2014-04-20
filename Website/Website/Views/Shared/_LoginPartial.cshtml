@@ -4,19 +4,20 @@
     using (Html.BeginForm("LogOff", "User", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
     {
         @Html.AntiForgeryToken()
-
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Manage", "User", routeValues: null, htmlAttributes: new { title = "Manage" })
-            </li>
-            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-        </ul>
+        <div class="cell col-1 row-1">
+            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Manage", "User", routeValues: null, htmlAttributes: new { title = "Manage" })
+        </div>
+        <div class="cell col-1 row-1">
+            <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+        </div>
     }
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Register", "Register", "User", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        <li>@Html.ActionLink("Log in", "Login", "User", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
-    </ul>
+    <div class="cell col-1 row-1">
+        @Html.ActionLink("Register", "Register", "User", routeValues: null, htmlAttributes: new { id = "registerLink" })
+    </div>
+    <div class="cell col-1 row-1">
+        @Html.ActionLink("Log in", "Login", "User", routeValues: null, htmlAttributes: new { id = "loginLink" })
+    </div>
 }

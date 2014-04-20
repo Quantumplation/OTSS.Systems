@@ -195,14 +195,27 @@
     <Compile Include="ViewModels\Web\Users\RegisterViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\gridjinn.css">
+      <DependentUpon>gridjinn.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\site.css">
+      <DependentUpon>site.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\site.scss" />
+    <Content Include="Content\variables.css">
+      <DependentUpon>variables.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\variables.scss" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ConnectionStrings.config" />
+    <Content Include="Content\gridjinn.scss" />
+    <Content Include="Content\variables.css.map">
+      <DependentUpon>variables.css</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\OTSS-Systems.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -225,7 +238,6 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Content\Site.css" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
