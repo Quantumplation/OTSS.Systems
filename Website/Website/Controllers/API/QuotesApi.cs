@@ -62,6 +62,7 @@ namespace Website.Controllers.API
         [HttpPost]
         [HttpGet]
         [Route("RandomToBanter")]
+        [AllowAnonymous]
         public void SendRandomToBanter()
         {
             using (var dbContext = new DatabaseContext())
