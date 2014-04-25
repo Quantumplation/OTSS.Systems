@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Http;
 using Website.Hubs;
 using Website.Models;
@@ -67,7 +68,7 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var qry = from row in dbContext.Quotes
+                var qry = from row in dbContext.Quotes.Include(x => x.Author)
                           orderby row.CreatedAt
                           select row;
                 var count = qry.Count();
