@@ -33,7 +33,7 @@ namespace Website.Hubs
             var jsonObject = new JObject();
             jsonObject["channel"] = "#banter";
             jsonObject["username"] = "OTSS.Quotes";
-            jsonObject["text"] = "> " + q.Text + "\n - " + quoteVM.Author + " " + DateTime.Now.Year;
+            jsonObject["text"] = "> " + q.Text + "\n - " + quoteVM.Author + " " + q.CreatedAt.Year;
             jsonObject["icon_emoji"] = ":kappa:";
             wc.UploadString(ConfigurationManager.ConnectionStrings["Slack-Banter"].ConnectionString, "POST", jsonObject.ToString());
         }

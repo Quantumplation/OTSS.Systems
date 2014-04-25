@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using Website.Hubs;
@@ -35,8 +36,46 @@ namespace Website.Controllers.API
                                      .Include(x => x.Author)
                                      .Include(x => x.Submitter)
                                      .SingleOrDefault(q => q.Id == id);
+                
                 if (quote == null) return null;
                 return new QuoteViewModel(quote);
+            }
+        }
+
+        [HttpGet]
+        [Route("Random")]
+        public QuoteViewModel GetRandom()
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var qry = from row in dbContext.Quotes
+                          select row;
+                var count = qry.Count();
+                var quote = qry.Skip(new Random().Next(count)).FirstOrDefault();
+
+                if (quote == null) return null;
+                return new QuoteViewModel(quote);
+            }
+        }
+
+
+        [HttpPost]
+        [HttpGet]
+        [Route("RandomToBanter")]
+        public void SendRandomToBanter()
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var qry = from row in dbContext.Quotes
+                          orderby row.CreatedAt
+                          select row;
+                var count = qry.Count();
+                var index = new Random().Next(count);
+                var quote = qry.Skip(index).FirstOrDefault();
+
+                if (quote == null) return;
+
+                QuotesHub.NewQuote(quote);
             }
         }
 
