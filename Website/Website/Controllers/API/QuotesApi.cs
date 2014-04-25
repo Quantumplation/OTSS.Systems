@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using Website.Hubs;
 using Website.Models;
 using System.Data.Entity;
 using Website.ViewModels.API;
@@ -49,6 +50,7 @@ namespace Website.Controllers.API
                 dbContext.Quotes.Add(quote);
                 dbContext.SaveChanges();
                 q.Id = quote.Id;
+                QuotesHub.NewQuote(quote);
             }
             return q;
         }
