@@ -61,5 +61,18 @@ namespace Website.Controllers
             }
             return PartialView("_Quote", vm);
         }
+
+        [HttpGet]
+        [Route("SendSpecificToBanter")]
+        public ActionResult SendSpecificToBanter(int Id)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var quote =
+                    dbContext.Quotes.Include(x => x.Author).Include(x => x.Submitter).Single(x => x.Id == Id);
+                QuotesHub.NewQuote(quote);
+            }
+            return RedirectToAction("Index");
+        }
     }
 }

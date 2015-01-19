@@ -20,6 +20,7 @@ Quotes:
     @foreach (var quote in Model.Quotes.OrderByDescending(x => x.CreatedAt))
     {
         @Html.Partial("_Quote", quote)
+        @Html.ActionLink("Send to Banter", "SendSpecificToBanter", new { quote.Id })
     }
 </div>
 
@@ -29,38 +30,38 @@ Quotes:
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/typeahead.jquery.js"></script>
     <script>
-        $(function() {
+        $(function () {
             var quoteHub = $.connection.quotesHub;
-            quoteHub.client.newQuote = function(data) {
+            quoteHub.client.newQuote = function (data) {
                 $(".quotes").append(data);
             };
             $.connection.hub.start();
 
 
             $(".typeahead").typeahead({
-                    minLength: 1,
-                    highlight: true,
-                }, {
-                    name: 'users',
-                    source: function(query, cb) {
-                        $.getJSON('/api/Users', null, function(result) {
-                            var results = [];
-                            for (var i in result) {
-                                var entry = result[i].UserName;
-                                if (entry.toLowerCase().indexOf(query.toLowerCase()) > -1)
-                                    results.push({ value: entry });
-                            }
-                            cb(results);
-                        });
-                    }
+                minLength: 1,
+                highlight: true,
+            }, {
+                name: 'users',
+                source: function (query, cb) {
+                    $.getJSON('/api/Users', null, function (result) {
+                        var results = [];
+                        for (var i in result) {
+                            var entry = result[i].UserName;
+                            if (entry.toLowerCase().indexOf(query.toLowerCase()) > -1)
+                                results.push({ value: entry });
+                        }
+                        cb(results);
+                    });
                 }
+            }
             );
         });
 
-        $("#newQuoteForm").submit(function(event) {
+        $("#newQuoteForm").submit(function (event) {
             event.preventDefault();
 
-            $.post('@Url.Action("NewQuote")', $(this).serialize(), function(data, textStatus, jqXHR) {
+            $.post('@Url.Action("NewQuote")', $(this).serialize(), function (data, textStatus, jqXHR) {
                 //$(".quotes").append(data);
             });
         });

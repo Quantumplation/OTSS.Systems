@@ -68,7 +68,7 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var qry = from row in dbContext.Quotes.Include(x => x.Author)
+                var qry = from row in dbContext.Quotes.Include(x => x.Author).Include(x => x.Submitter)
                           orderby row.CreatedAt
                           select row;
                 var count = qry.Count();
@@ -80,6 +80,7 @@ namespace Website.Controllers.API
                 QuotesHub.NewQuote(quote);
             }
         }
+
 
         [HttpPut]
         [Route("")]

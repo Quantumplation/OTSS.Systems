@@ -14,6 +14,7 @@ namespace Website.ViewModels.Web
 
         public QuoteViewModel(Quote quote)
         {
+            Id = quote.Id;
             Text = quote.Text;
             Author = quote.Author != null ? quote.Author.UserName : quote.AlternateAuthor ?? "Anonymous";
             Tags = quote.Tags.Select(tag => new TagViewModel(tag)).ToList();
@@ -21,6 +22,7 @@ namespace Website.ViewModels.Web
             Submitter = quote.Submitter.UserName;
         }
 
+        public int Id { get; set; }
         public string Text { get; set; }
         public string Author { get; set; }
         public string Submitter { get; set; }
