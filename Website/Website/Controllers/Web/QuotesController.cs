@@ -23,6 +23,7 @@ namespace Website.Controllers
             {
                 vm.Quotes = dbContext.Quotes
                                      .Include(p => p.Author)
+                                     .Include(p => p.Submitter)
                                      .Include(p => p.Tags).ToList()
                                      .Select(x => new QuoteViewModel(x)).ToList();
                 vm.Tags = dbContext.Tags.ToList()

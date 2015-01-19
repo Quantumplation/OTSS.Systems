@@ -12,17 +12,16 @@ All Tags:
     <span style="border-width:1px;border-color:black;border-style:solid;padding:3px;">@tag.Text</span>
 }
 <br />
+@Html.Partial("_NewQuote", new QuoteViewModel())
+
 Quotes:
 <br />
 <div class="quotes">
-    @foreach (var quote in Model.Quotes)
+    @foreach (var quote in Model.Quotes.OrderByDescending(x => x.CreatedAt))
     {
         @Html.Partial("_Quote", quote)
     }
 </div>
-
-@Html.Partial("_NewQuote", new QuoteViewModel())
-
 
 @section scripts
 {
@@ -48,7 +47,7 @@ Quotes:
                             var results = [];
                             for (var i in result) {
                                 var entry = result[i].UserName;
-                                if (entry.indexOf(query) > -1)
+                                if (entry.toLowerCase().indexOf(query.toLowerCase()) > -1)
                                     results.push({ value: entry });
                             }
                             cb(results);
