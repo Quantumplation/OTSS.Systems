@@ -33,7 +33,7 @@ Quotes:
         $(function () {
             var quoteHub = $.connection.quotesHub;
             quoteHub.client.newQuote = function (data) {
-                $(".quotes").append(data);
+                $(".quotes").prepend(data);
             };
             $.connection.hub.start();
 
@@ -60,10 +60,9 @@ Quotes:
 
         $("#newQuoteForm").submit(function (event) {
             event.preventDefault();
-
-            $.post('@Url.Action("NewQuote")', $(this).serialize(), function (data, textStatus, jqXHR) {
-                //$(".quotes").append(data);
-            });
+            var stuf = $(this).serialize();
+            $(this).trigger("reset");
+            $.post('@Url.Action("NewQuote")', stuf);
         });
     </script>
 }
