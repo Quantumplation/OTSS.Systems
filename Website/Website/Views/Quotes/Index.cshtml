@@ -14,8 +14,7 @@ All Tags:
 <br />
 @Html.Partial("_NewQuote", new QuoteViewModel())
 
-Quotes:
-<br />
+<h3>Quotes</h3>
 <div class="quotes">
     @foreach (var quote in Model.Quotes.OrderByDescending(x => x.CreatedAt))
     {

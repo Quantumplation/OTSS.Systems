@@ -40,3 +40,12 @@ input[type="checkbox"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
+
+#newQuoteForm .row {
+    margin: 4px 0;
+}
+
+#newQuoteForm input {
+    width: 100%;
+    max-width:none;
+}
