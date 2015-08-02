@@ -8,3 +8,11 @@
         </div>
     </div>
 }
+@if (User.IsInRole("Lunch Administrator"))
+{
+    <div class="row">
+        <div class="col-xs-12">
+            @Html.ActionLink("Enter Lunch Decision", "EnterDecision", "Lunch")
+        </div>
+    </div>
+}

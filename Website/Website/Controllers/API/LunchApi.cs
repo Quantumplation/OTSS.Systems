@@ -25,14 +25,8 @@ namespace Website.Controllers.API
                 if (vote.Score > 1 || vote.Score < -1)
                     return false;
 
-                var option = await dbContext.LunchOptions.SingleOrDefaultAsync(o => o.Name == vote.OptionName);
                 var user = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
-
-                if (option == null)
-                {
-                    option = new LunchOption { Name = vote.OptionName };
-                    dbContext.LunchOptions.Add(option);
-                }
+                var option = await GetOrAddOption(dbContext, vote.OptionName);
 
                 var poll = await dbContext.LunchPolls
                     .Include(p => p.Votes.Select(v => v.User))
@@ -70,6 +64,17 @@ namespace Website.Controllers.API
 
                 return true;
             }
+        }
+
+        public async Task<LunchOption> GetOrAddOption(DatabaseContext dbContext, string name)
+        {
+            var option = await dbContext.LunchOptions.SingleOrDefaultAsync(o => o.Name == name);
+            if (option == null)
+            {
+                option = new LunchOption { Name = name };
+                dbContext.LunchOptions.Add(option);
+            }
+            return option;
         }
 
         [Route("Options/{q?}")]
