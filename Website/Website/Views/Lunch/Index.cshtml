@@ -44,9 +44,12 @@
                 existing.replaceWith(data);
             else
                 $('#suggestions').append(data);
+            $('#lunch-options .has-tooltip').tooltip();
             $('#lunch-options').show();
         };
         $.connection.hub.start();
+
+        $('#lunch-options .has-tooltip').tooltip();
 
         function submitVote(name, vote) {
             if (!name) return;
