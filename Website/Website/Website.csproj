@@ -176,6 +176,7 @@
     <Compile Include="Controllers\API\LunchApi.cs" />
     <Compile Include="Controllers\API\QuotesApi.cs" />
     <Compile Include="Controllers\API\UsersApi.cs" />
+    <Compile Include="Controllers\Web\AdminController.cs" />
     <Compile Include="Controllers\Web\LunchController.cs" />
     <Compile Include="Controllers\Web\QuotesController.cs" />
     <Compile Include="Controllers\Web\UserController.cs" />
@@ -216,6 +217,7 @@
     <Compile Include="ViewModels\API\LunchVoteViewModel.cs" />
     <Compile Include="ViewModels\API\QuoteViewModel.cs" />
     <Compile Include="ViewModels\API\UserViewModel.cs" />
+    <Compile Include="ViewModels\Web\Admin\AddRoleViewModel.cs" />
     <Compile Include="ViewModels\Web\Lunch\LunchOptionViewModel.cs" />
     <Compile Include="ViewModels\Web\Lunch\LunchPollViewModel.cs" />
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
@@ -288,6 +290,8 @@
     <Content Include="Views\Home\SignalRSample.cshtml" />
     <Content Include="Views\Lunch\Index.cshtml" />
     <Content Include="Views\Lunch\_LunchOption.cshtml" />
+    <Content Include="Views\Admin\AddRole.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

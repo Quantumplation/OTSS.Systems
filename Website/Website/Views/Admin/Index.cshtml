@@ -1,0 +1,10 @@
+﻿<h3>Administration</h3>
+
+@if (User.IsInRole("Administrator"))
+{
+    <div class="row">
+        <div class="col-xs-12">
+            @Html.ActionLink("Add Role", "AddRole")
+        </div>
+    </div>
+}
