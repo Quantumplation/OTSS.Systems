@@ -173,15 +173,19 @@
     <Compile Include="App_Start\TypeaheadBundleConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attributes\ApiAuthorizeAttribute.cs" />
+    <Compile Include="Controllers\API\LunchApi.cs" />
     <Compile Include="Controllers\API\QuotesApi.cs" />
     <Compile Include="Controllers\API\UsersApi.cs" />
+    <Compile Include="Controllers\Web\LunchController.cs" />
     <Compile Include="Controllers\Web\QuotesController.cs" />
     <Compile Include="Controllers\Web\UserController.cs" />
     <Compile Include="Controllers\Web\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\LunchHub.cs" />
     <Compile Include="Hubs\QuotesHub.cs" />
+    <Compile Include="Hubs\RazorHub.cs" />
     <Compile Include="Hubs\SampleHub.cs" />
     <Compile Include="Migrations\201404102157078_InitialCreate.cs" />
     <Compile Include="Migrations\201404102157078_InitialCreate.Designer.cs">
@@ -195,15 +199,25 @@
     <Compile Include="Migrations\201404150106127_QuotesAndTags.Designer.cs">
       <DependentUpon>201404150106127_QuotesAndTags.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507182126500_LunchPolls.cs" />
+    <Compile Include="Migrations\201507182126500_LunchPolls.Designer.cs">
+      <DependentUpon>201507182126500_LunchPolls.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\InviteKey.cs" />
+    <Compile Include="Models\LunchPoll.cs" />
     <Compile Include="Models\Quote.cs" />
+    <Compile Include="Models\LunchOption.cs" />
     <Compile Include="Models\Tag.cs" />
+    <Compile Include="Models\LunchVote.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\API\LunchVoteViewModel.cs" />
     <Compile Include="ViewModels\API\QuoteViewModel.cs" />
     <Compile Include="ViewModels\API\UserViewModel.cs" />
+    <Compile Include="ViewModels\Web\Lunch\LunchOptionViewModel.cs" />
+    <Compile Include="ViewModels\Web\Lunch\LunchPollViewModel.cs" />
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
     <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
@@ -216,6 +230,8 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\thumbsdown.png" />
+    <Content Include="Content\thumbsup.png" />
     <Content Include="Content\typeahead.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -270,6 +286,8 @@
     <Content Include="Views\Quotes\_NewQuote.cshtml" />
     <Content Include="Views\Quotes\_Quote.cshtml" />
     <Content Include="Views\Home\SignalRSample.cshtml" />
+    <Content Include="Views\Lunch\Index.cshtml" />
+    <Content Include="Views\Lunch\_LunchOption.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -291,6 +309,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201404150106127_QuotesAndTags.resx">
       <DependentUpon>201404150106127_QuotesAndTags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507182126500_LunchPolls.resx">
+      <DependentUpon>201507182126500_LunchPolls.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
