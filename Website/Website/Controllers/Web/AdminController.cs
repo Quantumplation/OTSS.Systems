@@ -13,7 +13,6 @@ using Website.ViewModels.Web;
 namespace Website.Controllers.Web
 {
     [RoutePrefix("Admin")]
-    [Authorize(Roles = "Administrator")]
     public class AdminController : Controller
     {
         public AdminController()
@@ -36,19 +35,22 @@ namespace Website.Controllers.Web
 
         private DatabaseContext DbContext { get; set; }
 
-        
+
+        [Authorize(Roles = "Administrator, Lunch Administrator")]
         [Route("")]
         public ActionResult Index()
         {
             return View();
         }
 
+        [Authorize(Roles = "Administrator")]
         [Route("AddRole")]
         public ActionResult AddRole()
         {
             return View();
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost, Route("AddRole")]
         public async Task<ActionResult> AddRole(AddRoleViewModel vm)
         {
