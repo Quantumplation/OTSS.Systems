@@ -34,7 +34,7 @@ namespace Website.Controllers.API
                     .SingleOrDefaultAsync(p => p.Id == vote.PollId);
 
                 var currentVote = poll.Votes.SingleOrDefault(v => v.User == user && v.Option == option);
-                if (currentVote?.Score == vote.Score)
+                if ((currentVote?.Score ?? 0) == vote.Score)
                 {
                     await dbContext.SaveChangesAsync();
                     return true;
