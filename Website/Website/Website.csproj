@@ -218,6 +218,7 @@
     <Compile Include="ViewModels\API\QuoteViewModel.cs" />
     <Compile Include="ViewModels\API\UserViewModel.cs" />
     <Compile Include="ViewModels\Web\Admin\AddRoleViewModel.cs" />
+    <Compile Include="ViewModels\Web\Admin\DeleteUserViewModel.cs" />
     <Compile Include="ViewModels\Web\Admin\ResetPasswordViewModel.cs" />
     <Compile Include="ViewModels\Web\Lunch\LunchOptionViewModel.cs" />
     <Compile Include="ViewModels\Web\Lunch\LunchPollViewModel.cs" />
@@ -295,6 +296,7 @@
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Lunch\EnterDecision.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
+    <Content Include="Views\Admin\DeleteUser.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

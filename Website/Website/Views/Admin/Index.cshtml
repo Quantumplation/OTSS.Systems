@@ -6,6 +6,7 @@
     <div class="list-group">
         @Html.ActionLink("Add Role", "AddRole", "Admin", null, new { @class = "list-group-item" })
         @Html.ActionLink("Reset Password", "ResetPassword", "Admin", null, new { @class = "list-group-item" })
+        @Html.ActionLink("Delete User", "DeleteUser", "Admin", null, new { @class = "list-group-item" })
     </div>
 }
 @if (User.IsInRole("Lunch Administrator"))

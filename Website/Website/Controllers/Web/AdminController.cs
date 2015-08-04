@@ -58,6 +58,13 @@ namespace Website.Controllers.Web
         }
 
         [Authorize(Roles = "Administrator")]
+        [Route("DeleteUser")]
+        public ActionResult DeleteUser()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Administrator")]
         [HttpPost, Route("AddRole")]
         public async Task<ActionResult> AddRole(AddRoleViewModel vm)
         {
@@ -94,6 +101,25 @@ namespace Website.Controllers.Web
             }
             return View();
         }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost, Route("DeleteUser")]
+        public async Task<ActionResult> DeleteUser(DeleteUserViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = UserManager.FindByName(vm.Username);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "User not found");
+                    return View();
+                }
+                var delete = await UserManager.DeleteAsync(user);
+                if (WasSuccessful(delete)) return View("Index");
+            }
+            return View();
+        }
+
 
         private bool WasSuccessful(IdentityResult result)
         {
