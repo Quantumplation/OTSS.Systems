@@ -19,13 +19,19 @@
                 @Html.ActionLink("Application name", "Index", "Home", null, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
-                </ul>
                 @if (Request.IsAuthenticated)
                 {
+                    if (User.IsInRole("Administrator") || User.IsInRole("Lunch Administrator"))
+                    {
+                        <ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("Admin", "Index", "Admin", new { area = "" }, null)</li>
+                        </ul>
+                    }
                     <ul class="nav navbar-nav">
                         <li>@Html.ActionLink("Quotes", "Index", "Quotes", new { area = "" }, null)</li>
+                    </ul>
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Lunch", "Index", "Lunch", new { area = "" }, null)</li>
                     </ul>
                     <ul class="nav navbar-nav">
                         <li>@Html.ActionLink("SignalR Sample", "SignalRSample", "Home", new { area = "" }, null)</li>

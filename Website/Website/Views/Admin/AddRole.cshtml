@@ -1,0 +1,32 @@
+﻿@using Website.ViewModels.Web;
+@model Website.ViewModels.Web.AddRoleViewModel
+
+<div class="row">
+    <div class="col-md-12">
+    @using (Html.BeginForm("AddRole", "Admin", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <h3>Add Role</h3>
+        <hr />
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.Username, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Role, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Role, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Add role" class="btn btn-default" />
+            </div>
+        </div>
+        <hr />
+    }
+    </div>
+</div>

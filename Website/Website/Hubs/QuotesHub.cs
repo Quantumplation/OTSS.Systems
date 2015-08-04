@@ -5,28 +5,22 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Razor;
 using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json.Linq;
-using RazorEngine;
 using Website.Models;
 using Website.ViewModels.Web;
 
 namespace Website.Hubs
 {
-    public class QuotesHub : Hub
+    public class QuotesHub : RazorHub
     {
         private static Lazy<IHubContext> _context = new Lazy<IHubContext>(
             () => GlobalHost.ConnectionManager.GetHubContext<QuotesHub>());
 
-        private const string ViewName = "Quotes/_Quote";
-        private static readonly string ViewPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Views", ViewName + ".cshtml");
-
         public static void NewQuote(Quote q)
         {
             var quoteVM = new QuoteViewModel(q);
-            var rawPage = File.ReadAllText(ViewPath);
-            var page = Razor.Parse(rawPage, quoteVM);
+            var page = Render("_Quote", "Quotes", quoteVM);
             _context.Value.Clients.All.newQuote(page);
 
             var wc = new WebClient();

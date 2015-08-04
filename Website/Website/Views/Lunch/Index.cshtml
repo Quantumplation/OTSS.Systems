@@ -1,0 +1,108 @@
+﻿@using Website.ViewModels.Web;
+@model Website.ViewModels.Web.LunchPollViewModel
+@{ 
+    ViewBag.Title = "Lunch Management System";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Lunch Management System</h1>
+<h3>Current Suggestions</h3>
+<div class="row">
+    <div id="lunch-options" class="col-xs-12" style="@(Model.Options.Any() ? "" : "display: none;")">
+        <div class="row text-center">
+            <div id="suggestions" class="col-xs-12">
+            @foreach (var row in Model.Options)
+            {
+                @Html.Partial("_LunchOption", row)
+            }
+            </div>
+        </div>
+    </div>
+</div>
+<h3>Where do we want to eat?</h3>
+<div class="row">
+    <div class="col-xs-12">
+        <form id="option-form" class="form-inline">
+            <div class="form-group">
+                <input id="option-box" type="search" maxlength="80" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/jquery.signalR-2.0.3.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Scripts/typeahead.jquery.js"></script>
+    <script src="~/Scripts/bloodhound.js"></script>
+    <script>
+    $(function() {
+        var lunchHub = $.connection.lunchHub;
+        lunchHub.client.onVote = function (optionId, data) {
+            var existing = $('#lunch-option-' + optionId);
+            if (existing.length)
+                existing.replaceWith(data);
+            else
+                $('#suggestions').append(data);
+            $('#lunch-options .has-tooltip').tooltip();
+            $('#lunch-options').show();
+        };
+        $.connection.hub.start();
+
+        $('#lunch-options .has-tooltip').tooltip();
+
+        function submitVote(name, vote) {
+            if (!name) return;
+            $.ajax("api/Lunch/Vote", {
+                method: "PUT",
+                data: {
+                    PollId: @Model.Id,
+                    OptionName: name,
+                    Score: vote
+                }
+            });
+        }
+
+        $('#lunch-options').on('click', '.btn', function () {
+            var jq = $(this),
+                name = jq.data('optionName'),
+                score = jq.data('score');
+            jq.button('toggle');
+            submitVote(name, jq.hasClass('active') ? score : 0);
+        });
+
+        $('#option-form').submit(function(e){
+            e.preventDefault();
+            submitVote($('#option-box').val(), 1);
+            $('#option-box').typeahead('val', '');
+        });
+
+        // autocomplete
+        var hound = new Bloodhound({
+            remote: {
+                url: "api/Lunch/Options/%QUERY",
+                wildcard: "%QUERY"
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            identify: function(obj) { return obj.Id; },
+            sorter: function (a, b) {
+                var an = a.Name.toLowerCase(),
+                    bn = b.Name.toLowerCase();
+                if (an < bn) return -1;
+                if (an > bn) return 1;
+                return 0;
+            }
+        });
+        hound.initialize();
+        $('#option-box').typeahead({
+            minLength: 1,
+            highlight: true
+        }, {
+            source: hound.ttAdapter(),
+            display: "Name",
+        });
+
+    });
+    </script>
+}

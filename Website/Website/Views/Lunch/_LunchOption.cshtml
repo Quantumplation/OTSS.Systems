@@ -1,0 +1,40 @@
+﻿@using System.IO;
+@using Website.ViewModels.Web;
+@model Website.ViewModels.Web.LunchOptionViewModel
+
+<div id="lunch-option-@Model.Id" class="lunch-option row">
+    <div class="col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-body vertical-align">
+                <div class="col-xs-2">
+                    <span class="h3">@Model.Score</span><br />
+                    @DisplayVotes("+", Model.Upvotes)/@DisplayVotes("-", Model.Downvotes)
+                </div>
+                <div class="col-xs-6"><span class="h3">@Model.Name</span></div>
+                <div class="col-xs-4">
+                    <div class="btn-group btn-group-lg btn-group-justified" role="group">
+                        @Button("btn-danger", "thumbsdown.png", -1)
+                        @Button("btn-success", "thumbsup.png", 1)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@helper Button(string btnclass, string url, int score)
+{
+    if (Model.Score != score) { btnclass = "btn-default"; }
+    var active = Model.Score == score ? "active" : "";
+    var ariapressed = Model.Score == score ? "true" : "false";
+    <a role="button" class="btn @btnclass @active" aria-pressed="@ariapressed" data-option-name="@Model.Name" data-score="@score">
+        <img src="@Url.Content(Path.Combine("~/Content", url))" width="32" height="32" />
+    </a>
+}
+
+@helper DisplayVotes(string prefix, ICollection<string> votes)
+{
+    @*Display all the votes on different lines*@
+    <span class="has-tooltip" data-toggle="tooltip" data-placement="bottom" title="@string.Join("\n", votes)">@prefix@votes.Count</span>
+}

@@ -1,0 +1,18 @@
+﻿<h3>Administration</h3>
+
+@if (User.IsInRole("Administrator"))
+{
+    <h4>Administrator</h4>
+    <div class="list-group">
+        @Html.ActionLink("Add Role", "AddRole", "Admin", null, new { @class = "list-group-item" })
+        @Html.ActionLink("Reset Password", "ResetPassword", "Admin", null, new { @class = "list-group-item" })
+        @Html.ActionLink("Delete User", "DeleteUser", "Admin", null, new { @class = "list-group-item" })
+    </div>
+}
+@if (User.IsInRole("Lunch Administrator"))
+{
+    <h4>Lunch Administrator</h4>
+    <div class="list-group">
+        @Html.ActionLink("Enter Lunch Decision", "EnterDecision", "Lunch", null, new { @class = "list-group-item" })
+    </div>
+}
