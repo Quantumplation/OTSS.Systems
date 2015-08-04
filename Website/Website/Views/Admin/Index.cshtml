@@ -2,17 +2,16 @@
 
 @if (User.IsInRole("Administrator"))
 {
-    <div class="row">
-        <div class="col-xs-12">
-            @Html.ActionLink("Add Role", "AddRole")
-        </div>
+    <h4>Administrator</h4>
+    <div class="list-group">
+        @Html.ActionLink("Add Role", "AddRole", "Admin", null, new { @class = "list-group-item" })
+        @Html.ActionLink("Reset Password", "ResetPassword", "Admin", null, new { @class = "list-group-item" })
     </div>
 }
 @if (User.IsInRole("Lunch Administrator"))
 {
-    <div class="row">
-        <div class="col-xs-12">
-            @Html.ActionLink("Enter Lunch Decision", "EnterDecision", "Lunch")
-        </div>
+    <h4>Lunch Administrator</h4>
+    <div class="list-group">
+        @Html.ActionLink("Enter Lunch Decision", "EnterDecision", "Lunch", null, new { @class = "list-group-item" })
     </div>
 }
