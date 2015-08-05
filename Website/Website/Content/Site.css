@@ -58,3 +58,7 @@ input[type="checkbox"].input-validation-error {
 .has-tooltip {
     cursor: pointer;
 }
+
+.tooltip-inner {
+    white-space: pre-wrap;
+}

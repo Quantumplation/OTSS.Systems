@@ -23,12 +23,12 @@
 </div>
 
 
-@helper Button(string btnclass, string url, int score)
+@helper Button(string activeClass, string url, int score)
 {
-    if (Model.Score != score) { btnclass = "btn-default"; }
-    var active = Model.Score == score ? "active" : "";
-    var ariapressed = Model.Score == score ? "true" : "false";
-    <a role="button" class="btn @btnclass @active" aria-pressed="@ariapressed" data-option-name="@Model.Name" data-score="@score">
+    var btnclass = (Model.CurrentUserVote == score) ? activeClass : "btn-default";
+    var active = Model.CurrentUserVote == score ? "active" : "";
+    var ariapressed = Model.CurrentUserVote == score ? "true" : "false";
+    <a role="button" class="btn @btnclass @active" aria-pressed="@ariapressed" data-option-name="@Model.Name" data-active-class="@activeClass" data-score="@score">
         <img src="@Url.Content(Path.Combine("~/Content", url))" width="32" height="32" />
     </a>
 }

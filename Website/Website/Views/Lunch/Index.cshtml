@@ -37,8 +37,26 @@
     <script src="~/Scripts/bloodhound.js"></script>
     <script>
     $(function() {
+        function toggleButton(btn) {
+            var onClass = btn.data('activeClass');
+            btn.toggleClass('btn-default')
+                .toggleClass(onClass)
+                .button('toggle');
+        }
+
         var lunchHub = $.connection.lunchHub;
-        lunchHub.client.onVote = function (optionId, data) {
+        lunchHub.client.onVote = function (optionId, upvoters, downvoters, data) {
+            debugger;
+            data = $.parseHTML(data)[0];
+            var username = "@User.Identity.Name";
+            if ($.inArray(username, upvoters) > -1) {
+                toggleButton($('.btn[data-score="1"]', data));
+            }
+            if ($.inArray(username, downvoters) > -1) {
+                toggleButton($('.btn[data-score="-1"]', data));
+            }
+
+
             var existing = $('#lunch-option-' + optionId);
             if (existing.length)
                 existing.replaceWith(data);
@@ -67,7 +85,7 @@
             var jq = $(this),
                 name = jq.data('optionName'),
                 score = jq.data('score');
-            jq.button('toggle');
+            toggleButton(jq);
             submitVote(name, jq.hasClass('active') ? score : 0);
         });
 

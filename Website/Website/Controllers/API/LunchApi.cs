@@ -60,7 +60,7 @@ namespace Website.Controllers.API
                 }
                 await dbContext.SaveChangesAsync();
 
-                LunchHub.OnVote(option, poll.Votes.Where(v => v.Option == option), user.UserName);
+                LunchHub.OnVote(option, poll.Votes.Where(v => v.Option == option));
 
                 return true;
             }

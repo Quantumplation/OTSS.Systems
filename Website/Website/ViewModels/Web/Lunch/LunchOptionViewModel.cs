@@ -23,7 +23,7 @@ namespace Website.ViewModels.Web
             Downvotes = new List<string>();
         }
 
-        public LunchOptionViewModel(LunchOption lo, IEnumerable<LunchVote> votes, string username)
+        public LunchOptionViewModel(LunchOption lo, IEnumerable<LunchVote> votes)
         {
             Id = lo.Id;
             Name = lo.Name;
@@ -32,6 +32,11 @@ namespace Website.ViewModels.Web
             Upvotes = vLookup[1].OrderBy(n => n).ToList();
             Downvotes = vLookup[-1].OrderBy(n => n).ToList();
 
+        }
+
+        public LunchOptionViewModel(LunchOption lo, IEnumerable<LunchVote> votes, string username)
+            : this(lo, votes)
+        {
             if (Upvotes.Contains(username))
                 CurrentUserVote = 1;
             else if (Downvotes.Contains(username))
