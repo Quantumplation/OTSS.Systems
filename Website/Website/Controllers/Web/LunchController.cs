@@ -15,13 +15,29 @@ namespace Website.Controllers.Web
     [Authorize]
     public class LunchController : Controller
     {
+        private readonly API.LunchController LunchAPI = new API.LunchController();
+         
         [Route("")]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            using (var dbContext = new DatabaseContext())
-            {
-                return View(new LunchPollViewModel(GetDailyPoll(dbContext), User.Identity.Name));
-            }
+            return View((await LunchAPI.GetPolls(DateTime.Now)).ToList());
+        }
+
+        [Route("{name}", Name = "Poll")]
+        public async Task<ActionResult> Poll(string name)
+        {
+            var poll = await LunchAPI.GetPoll(DateTime.Now, name);
+            return poll != null
+                ? (ActionResult)View(poll)
+                : HttpNotFound();
+        }
+
+        [Route("", Name = "CreatePoll")]
+        [HttpPost]
+        public async Task<ActionResult> CreatePoll(NewLunchPollViewModel model)
+        {
+            await LunchAPI.CreatePoll(model.Name);
+            return RedirectToAction("Poll", new { name = model.Name });
         }
 
         [Authorize(Roles = "Lunch Administrator")]
@@ -38,7 +54,7 @@ namespace Website.Controllers.Web
             using (var dbContext = new DatabaseContext())
             {
                 var poll = GetDailyPoll(dbContext);
-                poll.Decision = await new API.LunchController().GetOrAddOption(dbContext, option.Name);
+                poll.Decision = await LunchAPI.GetOrAddOption(dbContext, option.Name);
                 await dbContext.SaveChangesAsync();
                 return RedirectToAction("Index");
             }

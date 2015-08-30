@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using Website.Models;
 
-namespace Website.ViewModels.Web
+namespace Website.ViewModels.API
 {
     public class LunchOptionViewModel
     {

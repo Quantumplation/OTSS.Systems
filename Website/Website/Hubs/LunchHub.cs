@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
-using Website.ViewModels.Web;
+using Website.ViewModels.API;
 using Website.Models;
 
 namespace Website.Hubs

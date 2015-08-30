@@ -204,6 +204,10 @@
     <Compile Include="Migrations\201507182126500_LunchPolls.Designer.cs">
       <DependentUpon>201507182126500_LunchPolls.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201508292143428_LunchCrews.cs" />
+    <Compile Include="Migrations\201508292143428_LunchCrews.Designer.cs">
+      <DependentUpon>201508292143428_LunchCrews.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\InviteKey.cs" />
@@ -220,8 +224,9 @@
     <Compile Include="ViewModels\Web\Admin\AddRoleViewModel.cs" />
     <Compile Include="ViewModels\Web\Admin\DeleteUserViewModel.cs" />
     <Compile Include="ViewModels\Web\Admin\ResetPasswordViewModel.cs" />
-    <Compile Include="ViewModels\Web\Lunch\LunchOptionViewModel.cs" />
-    <Compile Include="ViewModels\Web\Lunch\LunchPollViewModel.cs" />
+    <Compile Include="ViewModels\API\LunchOptionViewModel.cs" />
+    <Compile Include="ViewModels\API\LunchPollViewModel.cs" />
+    <Compile Include="ViewModels\Web\Lunch\NewLunchPollViewModel.cs" />
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
     <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
@@ -290,13 +295,14 @@
     <Content Include="Views\Quotes\_NewQuote.cshtml" />
     <Content Include="Views\Quotes\_Quote.cshtml" />
     <Content Include="Views\Home\SignalRSample.cshtml" />
-    <Content Include="Views\Lunch\Index.cshtml" />
+    <Content Include="Views\Lunch\Poll.cshtml" />
     <Content Include="Views\Lunch\_LunchOption.cshtml" />
     <Content Include="Views\Admin\AddRole.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Lunch\EnterDecision.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
+    <Content Include="Views\Lunch\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -321,6 +327,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507182126500_LunchPolls.resx">
       <DependentUpon>201507182126500_LunchPolls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201508292143428_LunchCrews.resx">
+      <DependentUpon>201508292143428_LunchCrews.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
