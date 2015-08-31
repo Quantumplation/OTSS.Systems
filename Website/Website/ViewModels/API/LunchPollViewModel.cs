@@ -8,11 +8,24 @@ namespace Website.ViewModels.API
 {
     public class LunchPollViewModel
     {
+        public LunchPollViewModel(LunchPoll poll)
+        {
+            Id = poll.Id;
+            Name = poll.Name;
+            Voters = poll.Voters.Select(u => u.UserName).ToList();
+            Options = new List<LunchOptionViewModel>
+            (
+                from vote in poll.Votes
+                group vote by vote.Option into g
+                select new LunchOptionViewModel(g.Key, g)
+            );
+        }
+
         public LunchPollViewModel(LunchPoll poll, string username)
         {
             Id = poll.Id;
             Name = poll.Name;
-            Users = poll.Voters.Select(u => u.UserName).ToList();
+            Voters = poll.Voters.Select(u => u.UserName).ToList();
             Options = new List<LunchOptionViewModel>
             (
                 from vote in poll.Votes
@@ -22,7 +35,7 @@ namespace Website.ViewModels.API
         }
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<string> Users { get; set; }
+        public ICollection<string> Voters { get; set; }
         public ICollection<LunchOptionViewModel> Options { get; set; }
     }
 }

@@ -12,19 +12,27 @@ namespace Website.Hubs
     //wish I'd made a Grub Management System...
     public class LunchHub : RazorHub
     {
-        public static void OnVote(LunchOption option, IEnumerable<LunchVote> votes)
+        public static void OnVote(int pollId, LunchOption option, IEnumerable<LunchVote> votes)
         {
-            OnVote(new LunchOptionViewModel(option, votes));
+            OnVote(pollId, new LunchOptionViewModel(option, votes));
         }
 
-        public static void OnVote(LunchOptionViewModel model)
+        public static void OnVote(int pollId, LunchOptionViewModel model)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
 
             var page = Render("_LunchOption", "Lunch", model);
 
-            hubContext.Clients.All.OnVote(model.Id, model.Upvotes, model.Downvotes, page);
+            hubContext.Clients.All.OnVote(pollId, model.Id, model.Upvotes, model.Downvotes, page);
         }
 
+        public static void OnPollAdded(LunchPollViewModel model)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
+
+            var page = Render("_NavbarPoll", "Lunch", model);
+
+            hubContext.Clients.All.OnPollAdded(model.Id, page);
+        }
     }
 }

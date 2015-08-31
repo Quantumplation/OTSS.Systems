@@ -23,12 +23,12 @@ namespace Website.Controllers.Web
             return View((await LunchAPI.GetPolls(DateTime.Now)).ToList());
         }
 
-        [Route("{name}", Name = "Poll")]
-        public async Task<ActionResult> Poll(string name)
+        [Route("{id}", Name = "Poll")]
+        public async Task<ActionResult> Poll(int id)
         {
-            var poll = await LunchAPI.GetPoll(DateTime.Now, name);
+            var poll = await LunchAPI.GetPoll(id);
             return poll != null
-                ? (ActionResult)View(poll)
+                ? (ActionResult)PartialView(poll)
                 : HttpNotFound();
         }
 
@@ -37,7 +37,7 @@ namespace Website.Controllers.Web
         public async Task<ActionResult> CreatePoll(NewLunchPollViewModel model)
         {
             await LunchAPI.CreatePoll(model.Name);
-            return RedirectToAction("Poll", new { name = model.Name });
+            return RedirectToAction("Index");
         }
 
         [Authorize(Roles = "Lunch Administrator")]

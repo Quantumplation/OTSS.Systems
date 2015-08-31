@@ -303,6 +303,7 @@
     <Content Include="Views\Admin\ResetPassword.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Lunch\Index.cshtml" />
+    <Content Include="Views\Lunch\_NavbarPoll.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

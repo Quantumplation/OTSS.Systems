@@ -16,7 +16,7 @@ namespace Website.Controllers.API
     [ApiAuthorize]
     public class LunchController : ApiController
     {
-        [Route("{date:datetime:regex(\\d{4}-\\d{2}-\\d{2})}/")]
+        [Route("{date:datetime:regex(\\d{4}-\\d{2}-\\d{2})}")]
         public async Task<IEnumerable<LunchPollViewModel>> GetPolls(DateTime date)
         {
             using (var dbContext = new DatabaseContext())
@@ -26,12 +26,12 @@ namespace Website.Controllers.API
             }
         }
 
-        [Route("{date:datetime:regex(\\d{4}-\\d{2}-\\d{2})}/{name}")]
-        public async Task<LunchPollViewModel> GetPoll(DateTime date, string name)
+        [Route("{id:int}")]
+        public async Task<LunchPollViewModel> GetPoll(int id)
         {
             using (var dbContext = new DatabaseContext())
             {
-                var poll = await GetPolls(dbContext, date).SingleOrDefaultAsync(p => p.Name == name);
+                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
                 return poll != null
                     ? new LunchPollViewModel(poll, User.Identity.Name)
                     : null;
@@ -73,6 +73,8 @@ namespace Website.Controllers.API
                 };
                 dbContext.LunchPolls.Add(poll);
                 await dbContext.SaveChangesAsync();
+
+                LunchHub.OnPollAdded(new LunchPollViewModel(poll));
                 return true;
             }
         }
@@ -120,7 +122,7 @@ namespace Website.Controllers.API
                     poll.Voters.Add(user);
                 await dbContext.SaveChangesAsync();
 
-                LunchHub.OnVote(option, poll.Votes.Where(v => v.Option == option));
+                LunchHub.OnVote(poll.Id, option, poll.Votes.Where(v => v.Option == option));
 
                 return true;
             }

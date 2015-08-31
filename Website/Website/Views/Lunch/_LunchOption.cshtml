@@ -1,10 +1,10 @@
 ﻿@using System.IO;
 @model Website.ViewModels.API.LunchOptionViewModel
 
-<div id="lunch-option-@Model.Id" class="lunch-option row">
+<div id="lunch-option-@Model.Id" class="row">
     <div class="col-xs-12">
         <div class="panel panel-default">
-            <div class="panel-body vertical-align">
+            <div class="lunch-option panel-body vertical-align">
                 <div class="col-xs-2">
                     <span class="h3">@Model.Score</span><br />
                     @DisplayVotes("+", Model.Upvotes)/@DisplayVotes("-", Model.Downvotes)
