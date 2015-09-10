@@ -1,5 +1,24 @@
 ﻿@model Website.ViewModels.API.LunchPollViewModel
 
+<div id="current-poll-info" class="row">
+    <div class="col-xs-6 text-left">
+        <span class="h2">
+            @Model.Name
+            <small class="has-tooltip" data-toggle="tooltip" data-placement="bottom" title="@string.Join("\n", Model.Voters)">
+                (@Model.Voters.Count member@(Model.Voters.Count == 1 ? "" : "s"))
+            </small>
+        </span>
+    </div>
+    <div class="col-xs-6 text-right">
+        <div id="in-poll" style="@(Model.ContainsCurrentUser ? "" : "display: none;")">
+            <button id="leave-crew-button" class="btn btn-default" type="button">Leave Crew</button>
+        </div>
+        <div id="not-in-poll" style="@(Model.ContainsCurrentUser ? "display: none;" : "")">
+            <strong class="text-danger">Only members are allowed to vote.</strong>
+            <button id="join-crew-button" class="btn btn-default" type="button">Join Crew</button>
+        </div>
+    </div>
+</div>
 <div class="row text-center">
     <div id="suggestions" class="col-xs-12">
     @foreach (var row in Model.Options)

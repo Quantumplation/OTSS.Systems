@@ -17,7 +17,7 @@ namespace Website.ViewModels.API
             (
                 from vote in poll.Votes
                 group vote by vote.Option into g
-                select new LunchOptionViewModel(g.Key, g)
+                select new LunchOptionViewModel(poll.Id, g.Key, g)
             );
         }
 
@@ -26,16 +26,18 @@ namespace Website.ViewModels.API
             Id = poll.Id;
             Name = poll.Name;
             Voters = poll.Voters.Select(u => u.UserName).ToList();
+            ContainsCurrentUser = Voters.Contains(username);
             Options = new List<LunchOptionViewModel>
             (
                 from vote in poll.Votes
                 group vote by vote.Option into g
-                select new LunchOptionViewModel(g.Key, g, username)
+                select new LunchOptionViewModel(poll.Id, g.Key, g, username, ContainsCurrentUser)
             );
         }
         public int Id { get; set; }
         public string Name { get; set; }
         public ICollection<string> Voters { get; set; }
         public ICollection<LunchOptionViewModel> Options { get; set; }
+        public bool ContainsCurrentUser { get; set; }
     }
 }

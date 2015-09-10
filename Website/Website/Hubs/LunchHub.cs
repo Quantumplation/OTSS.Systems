@@ -14,25 +14,25 @@ namespace Website.Hubs
     {
         public static void OnVote(int pollId, LunchOption option, IEnumerable<LunchVote> votes)
         {
-            OnVote(pollId, new LunchOptionViewModel(option, votes));
+            OnVote(new LunchOptionViewModel(pollId, option, votes));
         }
 
-        public static void OnVote(int pollId, LunchOptionViewModel model)
+        public static void OnVote(LunchOptionViewModel model)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
 
-            var page = Render("_LunchOption", "Lunch", model);
+            var view = Render("_LunchOption", "Lunch", model);
 
-            hubContext.Clients.All.OnVote(pollId, model.Id, model.Upvotes, model.Downvotes, page);
+            hubContext.Clients.All.OnVote(model, view);
         }
 
-        public static void OnPollAdded(LunchPollViewModel model)
+        public static void OnPollChanged(LunchPollViewModel model)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
 
-            var page = Render("_NavbarPoll", "Lunch", model);
+            var view = Render("_NavbarPoll", "Lunch", model);
 
-            hubContext.Clients.All.OnPollAdded(model.Id, page);
+            hubContext.Clients.All.OnPollChanged(model, view);
         }
     }
 }

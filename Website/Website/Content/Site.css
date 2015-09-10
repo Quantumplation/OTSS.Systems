@@ -81,3 +81,8 @@ hr.xs {
 #new-poll {
     border: none;
 }
+
+#current-poll-info {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}

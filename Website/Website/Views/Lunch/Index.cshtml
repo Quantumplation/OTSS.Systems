@@ -77,6 +77,7 @@
                 a.parent('li').toggleClass('active');
                 $('#current-poll')
                     .data('pollId', a.data('pollId'))
+                    .data('containsCurrentUser', a.data('containsCurrentUser'))
                     .html(data);
                 $('#current-poll .has-tooltip').tooltip();
                 $("#option-form").show();
@@ -91,28 +92,48 @@
         }
 
         var lunchHub = $.connection.lunchHub;
-        lunchHub.client.onVote = function (pollId, optionId, upvoters, downvoters, data) {
-            if (pollId != $('#current-poll').data('pollId')) return;
-            data = $.parseHTML(data)[0];
-            var username = "@User.Identity.Name";
-            if ($.inArray(username, upvoters) > -1) {
-                toggleButton($('.btn[data-score="1"]', data));
+        lunchHub.client.onVote = function (model, view) {
+            if (model.PollId != $('#current-poll').data('pollId')) return;
+            var html = $.parseHTML(view)[0],
+                username = "@User.Identity.Name";
+            if ($.inArray(username, model.Upvotes) > -1) {
+                toggleButton($('.btn[data-score="1"]', html));
             }
-            if ($.inArray(username, downvoters) > -1) {
-                toggleButton($('.btn[data-score="-1"]', data));
+            if ($.inArray(username, model.Downvotes) > -1) {
+                toggleButton($('.btn[data-score="-1"]', html));
             }
 
+            var inPoll = $('#current-poll').data('containsCurrentUser');
+            $('#suggestions .btn', html).attr('disabled', inPoll);
 
-            var existing = $('#lunch-option-' + optionId);
+            var existing = $('#lunch-option-' + model.Id);
             if (existing.length)
-                existing.replaceWith(data);
+                existing.replaceWith(html);
             else
-                $('#suggestions').append(data);
+                $('#suggestions').append(html);
+
             $('#current-poll .has-tooltip').tooltip();
         };
-        lunchHub.client.onPollAdded = function (pollId, data) {
-            $('#navbar-new-poll').before(data);
+        lunchHub.client.onPollChanged = function (model, view) {
+            var html = $.parseHTML(view)[0],
+                username = "@User.Identity.Name";
+
+            var existing = $('#navbar-poll-' + model.Id);
+            if (existing.length)
+                existing.replaceWith(html);
+            else
+                $('#navbar-new-poll').before(html);
+
             $("#option-form").show();
+
+            if (model.Id != $('#current-poll').data('pollId')) return;
+
+            var inPoll = $.inArray(username, model.Voters) > -1;
+            $('#current-poll').data('containsCurrentUser', inPoll);
+            $('#suggestions .btn').attr('disabled', inPoll);
+            $("#current-poll-info #in-poll").toggle(inPoll);
+            $("#current-poll-info #not-in-poll").toggle(!inPoll);
+
         }
         $.connection.hub.start();
 
@@ -132,7 +153,7 @@
             });
         }
 
-        $('#current-poll').on('click', '.btn', function () {
+        $('#current-poll').on('click', '#suggestions .btn', function () {
             var jq = $(this),
                 name = jq.data('optionName'),
                 score = jq.data('score');
@@ -140,7 +161,18 @@
             submitVote(name, jq.hasClass('active') ? score : 0);
         });
 
-        $('#option-form').submit(function(e){
+        $('#current-poll').on('click', '#join-crew-button', function () {
+            $.ajax("api/Lunch/" + $('#current-poll').data('pollId') + "/Join", {
+                method: "PUT"
+            });
+        });
+        $('#current-poll').on('click', '#leave-crew-button', function () {
+            $.ajax("api/Lunch/" + $('#current-poll').data('pollId') + "/Leave", {
+                method: "PUT"
+            });
+        });
+
+        $('#option-form').submit(function (e) {
             e.preventDefault();
             submitVote($('#option-box').val(), 1);
             $('#option-box').typeahead('val', '');

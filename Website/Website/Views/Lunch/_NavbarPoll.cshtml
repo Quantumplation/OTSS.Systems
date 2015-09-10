@@ -4,5 +4,5 @@
 }
 
 <li id="navbar-poll-@Model.Id" role="presentation" class="@(isActive ? "active" : "")">
-    <a href="#" data-poll-id="@Model.Id">@Model.Name</a>
+    <a href="#" data-poll-id="@Model.Id" data-contains-current-user="@Model.ContainsCurrentUser">@Model.Name</a>
 </li>
