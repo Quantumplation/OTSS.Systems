@@ -21,6 +21,7 @@ namespace Website.ViewModels.API
 
         public string Id { get; set; }
         public string UserName { get; set; }
+        public string SlackUsername { get; set; }
         public IEnumerable<int> AuthoredQuoteIds { get; set; }
         public IEnumerable<int> SubmittedQuoteIds { get; set; } 
     }

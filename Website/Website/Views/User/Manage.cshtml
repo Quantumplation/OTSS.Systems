@@ -1,4 +1,6 @@
 ﻿
+@using Website.ViewModels.Web
+@model ManageUserViewModel
 @{
     ViewBag.Title = "Manage";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -9,6 +11,29 @@
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div class="row">
     <div class="col-md-12">
-            @Html.Partial("_ChangePasswordPartial")
+            @Html.Partial("_ChangePasswordPartial", new UpdatePasswordViewModel())
     </div>
+    @if (Model.SlackUsername == null)
+    {
+      <div class="col-md-12">
+        <h3>Link with Slack Account</h3>
+        Several features of OTSS.Systems are only available if you link your account with Slack.
+        Click below to do so.
+        @Html.ActionLink("Link with Slack Account", "LinkWithSlack")
+      </div>
+    }
+    else
+    {
+      <div class="col-md-12">
+        <h3>Unlink Slack Account</h3>
+        <div class="alert alert-success">
+          Your account is currently linked to the slack account with username:
+          <p>
+            <h4>@Model.SlackUsername</h4>
+          </p>
+          To un-link your account, @Html.ActionLink("Click Here", "Unlink")
+        </div>
+      </div>
+    }
+
 </div>

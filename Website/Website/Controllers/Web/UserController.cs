@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Helpers;
@@ -8,6 +10,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
+using Newtonsoft.Json;
 using Website.Models;
 using Website.ViewModels.Web;
 
@@ -119,17 +122,76 @@ namespace Website.Controllers
             }
             return View(vm);
         }
-        
+       
         [Route("Manage")]
-        public ActionResult Manage()
+        public async Task<ActionResult> Manage()
         {
-            return View();
+            var viewModel = new ManageUserViewModel();
+            using (var db = new DatabaseContext())
+            {
+                var userId = User.Identity.GetUserId();
+                var user = await db.Users.Where(x => x.Id == userId).SingleOrDefaultAsync();
+                if (user.SlackToken != null)
+                {
+                    var userRaw = new WebClient().DownloadString($"https://slack.com/api/auth.test?token={user.SlackToken}");
+                    var userResp = JsonConvert.DeserializeAnonymousType(userRaw, new { user = "" });
+                    viewModel.SlackUsername = userResp.user;
+                }
+                return View("Manage", viewModel);
+            }
+        }
+
+        [Route("LinkWithSlack")]
+        public ActionResult LinkWithSlack()
+        {
+            var clientId = ConfigurationManager.AppSettings["SlackClientId"];
+            var teamId = ConfigurationManager.AppSettings["SlackTeamId"];
+            if (clientId == null || teamId == null)
+                return View("Error");
+            return Redirect($"https://slack.com/oauth/authorize?client_id={clientId}&scope=identify&state={User.Identity.GetUserId()}&team={teamId}");
+        }
+
+        [Route("Unlink")]
+        public async Task<ActionResult> Unlink()
+        {
+            using (var db = new DatabaseContext())
+            {
+                var userId = User.Identity.GetUserId();
+                var user = await db.Users.Where(x => x.Id == userId).SingleOrDefaultAsync();
+                user.SlackToken = null;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Manage");
+            }
+        }
+
+        [AllowAnonymous, Route("ConfirmLink")]
+        public async Task<ActionResult> ConfirmLink(string code, string state, string error)
+        {
+            if (error != null)
+                return View("Error");
+            if (state != User.Identity.GetUserId())
+                return View("Error");
+            using (var db = new DatabaseContext())
+            {
+                var user = db.Users.Where(x => x.Id == state).SingleOrDefaultAsync();
+                var client = new WebClient();
+                var clientId = ConfigurationManager.AppSettings["SlackClientId"];
+                var clientSecret = ConfigurationManager.AppSettings["SlackSecret"];
+                if (clientId == null || clientSecret == null)
+                    return View("Error");
+                var tokenRaw = client.DownloadString(new Uri($"https://slack.com/api/oauth.access?client_id={clientId}&client_secret={clientSecret}&code={code}"));
+                var token = JsonConvert.DeserializeAnonymousType(tokenRaw, new {access_token = "", scope = ""}).access_token;
+                (await user).SlackToken = token;
+                await db.SaveChangesAsync();
+
+                return RedirectToAction("Manage");
+            }
         }
 
         [Route("Manage")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Manage(ManageUserViewModel vm)
+        public async Task<ActionResult> Manage(UpdatePasswordViewModel vm)
         {
             if (ModelState.IsValid)
             {

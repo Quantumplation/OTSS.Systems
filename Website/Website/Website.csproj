@@ -204,6 +204,10 @@
     <Compile Include="Migrations\201507182126500_LunchPolls.Designer.cs">
       <DependentUpon>201507182126500_LunchPolls.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201509100318311_SlackToken.cs" />
+    <Compile Include="Migrations\201509100318311_SlackToken.Designer.cs">
+      <DependentUpon>201509100318311_SlackToken.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\InviteKey.cs" />
@@ -225,6 +229,7 @@
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
     <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
+    <Compile Include="ViewModels\Web\Users\UpdatePasswordViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\LoginViewModel.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -321,6 +326,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201507182126500_LunchPolls.resx">
       <DependentUpon>201507182126500_LunchPolls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201509100318311_SlackToken.resx">
+      <DependentUpon>201509100318311_SlackToken.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
