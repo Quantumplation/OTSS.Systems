@@ -16,9 +16,6 @@ namespace Website.ViewModels.API
         public ICollection<string> Upvotes { get; set; }
         public ICollection<string> Downvotes { get; set; }
 
-        public int CurrentUserVote { get; set; }
-        public bool CurrentUserInPoll { get; set; }
-
         public LunchOptionViewModel()
         {
             Upvotes = new List<string>();
@@ -34,17 +31,6 @@ namespace Website.ViewModels.API
             var vLookup = votes.ToLookup(v => v.Score, v => v.User.UserName);
             Upvotes = vLookup[1].OrderBy(n => n).ToList();
             Downvotes = vLookup[-1].OrderBy(n => n).ToList();
-
-        }
-
-        public LunchOptionViewModel(int pollId, LunchOption lo, IEnumerable<LunchVote> votes, string username, bool userInPoll)
-            : this(pollId, lo, votes)
-        {
-            if (Upvotes.Contains(username))
-                CurrentUserVote = 1;
-            else if (Downvotes.Contains(username))
-                CurrentUserVote = -1;
-            CurrentUserInPoll = userInPoll;
         }
     }
 }

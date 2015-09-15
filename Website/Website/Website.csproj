@@ -257,6 +257,7 @@
     <Compile Include="Models\LunchVote.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\API\LunchPollInfoViewModel.cs" />
     <Compile Include="ViewModels\API\LunchVoteViewModel.cs" />
     <Compile Include="ViewModels\API\QuoteViewModel.cs" />
     <Compile Include="ViewModels\API\UserViewModel.cs" />
@@ -351,15 +352,13 @@
     <Content Include="Views\Quotes\_NewQuote.cshtml" />
     <Content Include="Views\Quotes\_Quote.cshtml" />
     <Content Include="Views\Home\SignalRSample.cshtml" />
-    <Content Include="Views\Lunch\Poll.cshtml" />
-    <Content Include="Views\Lunch\_LunchOption.cshtml" />
     <Content Include="Views\Admin\AddRole.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
     <Content Include="Views\Lunch\EnterDecision.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Lunch\Index.cshtml" />
-    <Content Include="Views\Lunch\_NavbarPoll.cshtml" />
+    <Content Include="Scripts\lms.jsx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

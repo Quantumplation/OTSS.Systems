@@ -2,181 +2,32 @@
 @{
     ViewBag.Title = "Lunch Management System";
 
-    var current = Model.FirstOrDefault(m => m.Voters.Contains(User.Identity.Name)) ?? Model.FirstOrDefault();
+    var current = Model.FirstOrDefault(m => m.Info.Voters.Contains(User.Identity.Name));
     var currentId = current != null ? current.Id : default(int?); @*mvc5 razor can't into c#6 :(*@
 }
 
 <h1>@ViewBag.Title</h1>
 <hr />
-<div class="row">
-    <nav class="col-sm-3 col-xs-12">
-        <ul class="lunch-nav nav nav-pills nav-stacked">
-            @foreach (var poll in Model)
-            {
-                @Html.Partial("_NavbarPoll", poll, new ViewDataDictionary(poll) { { "IsActive", poll == current } });
-            }
-            <li id="navbar-new-poll" role="presentation">
-                <a href="#">
-                    <form action="/Lunch/" method="post" id="new-poll-form">
-                        <input id="new-poll" name="Name" type="text" placeholder="New Crew" />
-                    </form>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <hr class="xs" />
-    <div class="vr-sm col-sm-9 col-xs-12">
-        <div id="current-poll" data-poll-id="@currentId">
-            @if (current != null)
-            {
-                @Html.Partial("Poll", current);
-            }
-            else
-            {
-                <div class="alert alert-info">
-                    Create or join a lunch crew to start voting.
-                </div>
-            }
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <form id="option-form" class="form-inline" style="@(current != null ? "" : "display: none;")">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input id="option-box" type="search" maxlength="80" placeholder="Where do we want to eat?" class="form-control" />
-                            <span class="input-group-btn">
-                                <button type="submit" class="btn btn-default">Submit</button>
-                            </span>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+@Html.React("Page", new
+{
+    username = User.Identity.Name,
+    initialPolls = Model.ToDictionary(p => p.Id),
+    initialSelected = currentId
+})
 
 @section Scripts {
     <script src="~/Scripts/jquery.signalR-2.0.3.min.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/typeahead.jquery.js"></script>
     <script src="~/Scripts/bloodhound.js"></script>
+    <script src="~/Scripts/react/react-0.13.1.js"></script>
+    <script src="~/Scripts/lms.jsx"></script>
+    @Html.ReactInitJavaScript()
+
     <script>
-    $(function () {
-        $('.lunch-nav').on('click', 'a', function () {
-            // If there's an input field, just focus on that
-            var input = $('input', this);
-            if (input.length) {
-                input.focus();
-                return;
-            }
-
-            // Load a different lunch
-            var a = $(this);
-            $.get('/Lunch/' + a.data('pollId'), function (data) {
-                $('.lunch-nav > li.active').toggleClass('active');
-                a.parent('li').toggleClass('active');
-                $('#current-poll')
-                    .data('pollId', a.data('pollId'))
-                    .data('containsCurrentUser', a.data('containsCurrentUser'))
-                    .html(data);
-                $('#current-poll .has-tooltip').tooltip();
-                $("#option-form").show();
-            });
-        });
-
-        function toggleButton(btn) {
-            var onClass = btn.data('activeClass');
-            btn.toggleClass('btn-default')
-                .toggleClass(onClass)
-                .button('toggle');
-        }
-
-        var lunchHub = $.connection.lunchHub;
-        lunchHub.client.onVote = function (model, view) {
-            if (model.PollId != $('#current-poll').data('pollId')) return;
-            var html = $.parseHTML(view)[0],
-                username = "@User.Identity.Name";
-            if ($.inArray(username, model.Upvotes) > -1) {
-                toggleButton($('.btn[data-score="1"]', html));
-            }
-            if ($.inArray(username, model.Downvotes) > -1) {
-                toggleButton($('.btn[data-score="-1"]', html));
-            }
-
-            var inPoll = $('#current-poll').data('containsCurrentUser');
-            $('#suggestions .btn', html).attr('disabled', inPoll);
-
-            var existing = $('#lunch-option-' + model.Id);
-            if (existing.length)
-                existing.replaceWith(html);
-            else
-                $('#suggestions').append(html);
-
-            $('#current-poll .has-tooltip').tooltip();
-        };
-        lunchHub.client.onPollChanged = function (model, view) {
-            var html = $.parseHTML(view)[0],
-                username = "@User.Identity.Name";
-
-            var existing = $('#navbar-poll-' + model.Id);
-            if (existing.length)
-                existing.replaceWith(html);
-            else
-                $('#navbar-new-poll').before(html);
-
-            $("#option-form").show();
-
-            if (model.Id != $('#current-poll').data('pollId')) return;
-
-            var inPoll = $.inArray(username, model.Voters) > -1;
-            $('#current-poll').data('containsCurrentUser', inPoll);
-            $('#suggestions .btn').attr('disabled', inPoll);
-            $("#current-poll-info #in-poll").toggle(inPoll);
-            $("#current-poll-info #not-in-poll").toggle(!inPoll);
-
-        }
-        $.connection.hub.start();
+    $(function(){
 
         $('#current-poll .has-tooltip').tooltip();
-
-        function submitVote(name, vote) {
-            if (!name) return;
-            var id = $('#current-poll').data('pollId');
-            if (!id) return;
-            $.ajax("api/Lunch/Vote", {
-                method: "PUT",
-                data: {
-                    PollId: id,
-                    OptionName: name,
-                    Score: vote
-                }
-            });
-        }
-
-        $('#current-poll').on('click', '#suggestions .btn', function () {
-            var jq = $(this),
-                name = jq.data('optionName'),
-                score = jq.data('score');
-            toggleButton(jq);
-            submitVote(name, jq.hasClass('active') ? score : 0);
-        });
-
-        $('#current-poll').on('click', '#join-crew-button', function () {
-            $.ajax("api/Lunch/" + $('#current-poll').data('pollId') + "/Join", {
-                method: "PUT"
-            });
-        });
-        $('#current-poll').on('click', '#leave-crew-button', function () {
-            $.ajax("api/Lunch/" + $('#current-poll').data('pollId') + "/Leave", {
-                method: "PUT"
-            });
-        });
-
-        $('#option-form').submit(function (e) {
-            e.preventDefault();
-            submitVote($('#option-box').val(), 1);
-            $('#option-box').typeahead('val', '');
-        });
 
         // autocomplete
         var hound = new Bloodhound({

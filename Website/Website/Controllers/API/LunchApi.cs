@@ -22,7 +22,7 @@ namespace Website.Controllers.API
             using (var dbContext = new DatabaseContext())
             {
                 var polls = await GetPolls(dbContext, date).ToListAsync();
-                return polls.Select(p => new LunchPollViewModel(p, User.Identity.Name)).ToList();
+                return polls.Select(p => new LunchPollViewModel(p)).ToList();
             }
         }
 
@@ -33,7 +33,7 @@ namespace Website.Controllers.API
             {
                 var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
                 return poll != null
-                    ? new LunchPollViewModel(poll, User.Identity.Name)
+                    ? new LunchPollViewModel(poll)
                     : null;
             }
         }
@@ -68,7 +68,7 @@ namespace Website.Controllers.API
                 {
                     Name = name,
                     Date = DateTime.Now,
-                    Voters = new List<User> { currentUser },
+                    Voters = new List<User>(),
                     Votes = new List<LunchVote>()
                 };
                 dbContext.LunchPolls.Add(poll);

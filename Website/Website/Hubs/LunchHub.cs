@@ -10,7 +10,7 @@ using Website.Models;
 namespace Website.Hubs
 {
     //wish I'd made a Grub Management System...
-    public class LunchHub : RazorHub
+    public class LunchHub : Hub
     {
         public static void OnVote(int pollId, LunchOption option, IEnumerable<LunchVote> votes)
         {
@@ -20,19 +20,14 @@ namespace Website.Hubs
         public static void OnVote(LunchOptionViewModel model)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
-
-            var view = Render("_LunchOption", "Lunch", model);
-
-            hubContext.Clients.All.OnVote(model, view);
+            hubContext.Clients.All.OnVote(model);
         }
 
         public static void OnPollChanged(LunchPollViewModel model)
         {
+            if (model.Id == 0) return;
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
-
-            var view = Render("_NavbarPoll", "Lunch", model);
-
-            hubContext.Clients.All.OnPollChanged(model, view);
+            hubContext.Clients.All.OnPollChanged(model);
         }
     }
 }
