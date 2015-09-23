@@ -20,41 +20,15 @@
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/typeahead.jquery.js"></script>
     <script src="~/Scripts/bloodhound.js"></script>
+    <script src="~/Scripts/lunch.js"></script>
     <script src="~/Scripts/react/react-0.13.1.js"></script>
     <script src="~/Scripts/lms.jsx"></script>
     @Html.ReactInitJavaScript()
 
     <script>
-    $(function(){
-
+    $(function() {
         $('#current-poll .has-tooltip').tooltip();
-
-        // autocomplete
-        var hound = new Bloodhound({
-            remote: {
-                url: "api/Lunch/Options/%QUERY",
-                wildcard: "%QUERY"
-            },
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            datumTokenizer: Bloodhound.tokenizers.whitespace,
-            identify: function(obj) { return obj.Id; },
-            sorter: function (a, b) {
-                var an = a.Name.toLowerCase(),
-                    bn = b.Name.toLowerCase();
-                if (an < bn) return -1;
-                if (an > bn) return 1;
-                return 0;
-            }
-        });
-        hound.initialize();
-        $('#option-box').typeahead({
-            minLength: 1,
-            highlight: true
-        }, {
-            source: hound.ttAdapter(),
-            display: "Name",
-        });
-
+        lunchAutocomplete("#option-box");
     });
     </script>
 }

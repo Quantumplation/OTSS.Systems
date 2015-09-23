@@ -134,6 +134,22 @@ namespace Website.Controllers.API
             }
         }
 
+        [Route("{id}/Decide/{decision}")]
+        [HttpPut]
+        [ApiAuthorize(Roles = "Lunch Administrator")]
+        public async Task<bool> Decide(int id, string decision)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
+                if (poll == null) return false;
+                poll.Decision = await GetOrAddOption(dbContext, decision);
+
+                await dbContext.SaveChangesAsync();
+                return true;
+            }
+        }
+
         public async Task AddToPoll(DatabaseContext dbContext, LunchPoll poll, User user)
         {
             var existingPolls = await GetPolls(dbContext, DateTime.Now)

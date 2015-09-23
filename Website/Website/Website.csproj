@@ -266,7 +266,7 @@
     <Compile Include="ViewModels\Web\Admin\ResetPasswordViewModel.cs" />
     <Compile Include="ViewModels\API\LunchOptionViewModel.cs" />
     <Compile Include="ViewModels\API\LunchPollViewModel.cs" />
-    <Compile Include="ViewModels\Web\Lunch\NewLunchPollViewModel.cs" />
+    <Compile Include="ViewModels\Web\Lunch\EnterLunchDecisionViewModel.cs" />
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
     <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
@@ -291,6 +291,7 @@
     </None>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Scripts\lunch.js" />
     <Content Include="Content\thumbsdown.png" />
     <Content Include="Content\thumbsup.png" />
     <Content Include="Content\typeahead.css" />

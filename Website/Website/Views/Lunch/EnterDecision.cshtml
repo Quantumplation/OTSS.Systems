@@ -1,4 +1,4 @@
-﻿@model Website.Models.LunchOption
+﻿@model Website.ViewModels.Web.EnterLunchDecisionViewModel
 <div class="row">
     <div class="col-md-12">
     @using (Html.BeginForm("EnterDecision", "Lunch", FormMethod.Post, new { @class = "form-inline" }))
@@ -7,7 +7,10 @@
         <hr />
         @Html.ValidationSummary("", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.TextBoxFor(m => m.Name, new { id = "decision-box", @class = "form-control" })
+            @Html.DropDownListFor(m => m.SelectedPollId, Model.LunchPolls, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.TextBoxFor(m => m.Decision, new { id = "decision-box", @class = "form-control" })
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
         <hr />
@@ -18,33 +21,10 @@
 @section Scripts {
     <script src="~/Scripts/typeahead.jquery.js"></script>
     <script src="~/Scripts/bloodhound.js"></script>
+    <script src="~/Scripts/lunch.js"></script>
     <script>
         $(function () {
-            // autocomplete
-            var hound = new Bloodhound({
-                remote: {
-                    url: "../api/Lunch/Options/%QUERY",
-                    wildcard: "%QUERY"
-                },
-                queryTokenizer: Bloodhound.tokenizers.whitespace,
-                datumTokenizer: Bloodhound.tokenizers.whitespace,
-                identify: function (obj) { return obj.Id; },
-                sorter: function (a, b) {
-                    var an = a.Name.toLowerCase(),
-                        bn = b.Name.toLowerCase();
-                    if (an < bn) return -1;
-                    if (an > bn) return 1;
-                    return 0;
-                }
-            });
-            hound.initialize();
-            $('#decision-box').typeahead({
-                minLength: 1,
-                highlight: true
-            }, {
-                source: hound.ttAdapter(),
-                display: "Name",
-            });
+            lunchAutocomplete("#decision-box");
         });
     </script>
 }
