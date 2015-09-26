@@ -156,7 +156,6 @@ Website/Website/Content/bootstrap.css.map
 ConnectionStrings.config
 
 #React and its various packages
-Website/Website/ClearScript.V8/*
 Website/Website/Scripts/react/*
 
 # =========================
