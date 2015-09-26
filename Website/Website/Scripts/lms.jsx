@@ -178,13 +178,12 @@ var Page = React.createClass({
         $('#option-box').typeahead('val', '');
     },
     api: {
-        vote: function (pollId, optionName, score) {
-            if (!pollId || !optionName) return;
-            $.ajax("api/Lunch/Vote", {
+        vote: function (pollId, name, score) {
+            if (!pollId || !name) return;
+            $.ajax("api/Lunch/" + pollId + "/Vote", {
                 method: "PUT",
                 data: {
-                    PollId: pollId,
-                    OptionName: optionName,
+                    Name: name,
                     Score: score
                 }
             });

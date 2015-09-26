@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -38,7 +39,10 @@ namespace Website.Controllers.Web
         [HttpPost, Route("Decision")]
         public async Task<ActionResult> EnterDecision(EnterLunchDecisionViewModel model)
         {
-            return await LunchAPI.Decide(model.SelectedPollId, model.Decision)
+            var result = await LunchAPI.Decide(model.SelectedPollId, model.Decision);
+            var success = (await result.ExecuteAsync(new CancellationToken())).IsSuccessStatusCode;
+
+            return success
                 ? RedirectToAction("Index")
                 : EnterDecision();
         }

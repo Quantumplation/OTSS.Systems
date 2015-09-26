@@ -212,6 +212,7 @@
     <Compile Include="App_Start\TypeaheadBundleConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Attributes\ApiAuthorizeAttribute.cs" />
+    <Compile Include="Attributes\ApiForbidAttribute.cs" />
     <Compile Include="Controllers\API\LunchApi.cs" />
     <Compile Include="Controllers\API\QuotesApi.cs" />
     <Compile Include="Controllers\API\UsersApi.cs" />

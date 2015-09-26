@@ -38,30 +38,26 @@ namespace Website.Controllers.API
             }
         }
 
-        public IQueryable<LunchPoll> GetPolls(DatabaseContext dbContext)
+        [Route("Options/{q?}")]
+        public IEnumerable<LunchOption> GetOptions(string q = "")
         {
-            return dbContext.LunchPolls
-                .Include(p => p.Voters)
-                .Include(p => p.Votes.Select(v => v.User))
-                .Include(p => p.Votes.Select(v => v.Option));
-        }
-
-        public IQueryable<LunchPoll> GetPolls(DatabaseContext dbContext, DateTime date)
-        {
-            date = date.Date;
-            return GetPolls(dbContext).Where(p => DbFunctions.TruncateTime(p.Date) == date);
+            using (var dbContext = new DatabaseContext())
+            {
+                return dbContext.LunchOptions.Where(o => o.Name.Contains(q)).ToList();
+            }
         }
 
         [Route("{name}")]
         [HttpPost]
-        public async Task<bool> CreatePoll(string name)
+        [ApiForbid(Roles = "Goon")]
+        public async Task<IHttpActionResult> CreatePoll(string name)
         {
             using (var dbContext = new DatabaseContext())
             {
                 var exists = await GetPolls(dbContext, DateTime.Now)
                     .AnyAsync(p => p.Name == name);
 
-                if (exists) return false;
+                if (exists) return Ok();
 
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
                 var poll = new LunchPoll
@@ -76,78 +72,164 @@ namespace Website.Controllers.API
                 await dbContext.SaveChangesAsync();
 
                 LunchHub.OnPollChanged(new LunchPollViewModel(poll));
-                return true;
+                return Ok();
             }
         }
 
         [Route("{id}/Join")]
         [HttpPut]
-        public async Task<bool> JoinPoll(int id)
+        [ApiForbid(Roles = "Goon")]
+        public async Task<IHttpActionResult> JoinPoll(int id)
         {
             using (var dbContext = new DatabaseContext())
             {
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
 
                 var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return false;
+                if (poll == null) return NotFound();
 
                 await AddToPoll(dbContext, poll, currentUser);
 
                 await dbContext.SaveChangesAsync();
-                return true;
+                return Ok();
             }
         }
 
         [Route("{id}/Leave")]
         [HttpPut]
-        public async Task<bool> LeavePoll(int id)
+        public async Task<IHttpActionResult> LeavePoll(int id)
         {
             using (var dbContext = new DatabaseContext())
             {
                 var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return false;
+                if (poll == null) return NotFound();
 
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
                 RemoveFromPoll(dbContext, poll, currentUser);
 
                 await dbContext.SaveChangesAsync();
-                return true;
+                return Ok();
+            }
+        }
+
+        [Route("{id}/Vote")]
+        [HttpPut]
+        public async Task<IHttpActionResult> Vote([FromUri]int id, [FromBody]LunchVoteViewModel vote)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                if (vote.Score > 1 || vote.Score < -1)
+                    return StatusCode(HttpStatusCode.Forbidden);
+
+                var user = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
+                var option = await GetOrAddOption(dbContext, vote.Name);
+
+                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
+                if (poll == null)
+                    return NotFound();
+
+
+                var currentVote = poll.Votes.SingleOrDefault(v => v.User == user && v.Option == option);
+                if ((currentVote?.Score ?? 0) == vote.Score)
+                {
+                    await dbContext.SaveChangesAsync();
+                    return Ok();
+                }
+
+                if (vote.Score == 0)
+                {
+                    dbContext.LunchVotes.Remove(currentVote);
+                }
+                else if (currentVote != null)
+                {
+                    currentVote.Score = vote.Score;
+                }
+                else
+                {
+                    dbContext.LunchVotes.Add(new LunchVote
+                    {
+                        Poll = poll,
+                        Option = option,
+                        User = user,
+                        Score = vote.Score
+                    });
+                }
+                if (!poll.Voters.Contains(user))
+                    poll.Voters.Add(user);
+                await dbContext.SaveChangesAsync();
+
+                LunchHub.OnVote(poll.Id, option, poll.Votes.Where(v => v.Option == option));
+
+                return Ok();
+            }
+        }
+
+        [Route("{id}/Add/{username}")]
+        [HttpPut]
+        [ApiAuthorize(Roles = "Lunch Administrator")]
+        public async Task<IHttpActionResult> AddToPoll(int id, string username)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
+                if (poll == null) return NotFound();
+                var user = await dbContext.Users.SingleOrDefaultAsync(p => p.UserName == username);
+                if (user == null) return NotFound();
+
+                await AddToPoll(dbContext, poll, user);
+
+                await dbContext.SaveChangesAsync();
+                return Ok();
             }
         }
 
         [Route("{id}/Remove/{username}")]
         [HttpPut]
         [ApiAuthorize(Roles = "Lunch Administrator")]
-        public async Task<bool> RemoveFromPoll(int id, string username)
+        public async Task<IHttpActionResult> RemoveFromPoll(int id, string username)
         {
             using (var dbContext = new DatabaseContext())
             {
                 var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return false;
+                if (poll == null) return NotFound();
                 var user = await dbContext.Users.SingleOrDefaultAsync(p => p.UserName == username);
-                if (user == null) return false;
+                if (user == null) return NotFound();
 
                 RemoveFromPoll(dbContext, poll, user);
 
                 await dbContext.SaveChangesAsync();
-                return true;
+                return Ok();
             }
         }
 
         [Route("{id}/Decide/{decision}")]
         [HttpPut]
         [ApiAuthorize(Roles = "Lunch Administrator")]
-        public async Task<bool> Decide(int id, string decision)
+        public async Task<IHttpActionResult> Decide(int id, string decision)
         {
             using (var dbContext = new DatabaseContext())
             {
                 var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return false;
+                if (poll == null) return NotFound();
                 poll.Decision = await GetOrAddOption(dbContext, decision);
 
                 await dbContext.SaveChangesAsync();
-                return true;
+                return Ok();
             }
+        }
+
+        public IQueryable<LunchPoll> GetPolls(DatabaseContext dbContext)
+        {
+            return dbContext.LunchPolls
+                .Include(p => p.Voters)
+                .Include(p => p.Votes.Select(v => v.User))
+                .Include(p => p.Votes.Select(v => v.Option));
+        }
+
+        public IQueryable<LunchPoll> GetPolls(DatabaseContext dbContext, DateTime date)
+        {
+            date = date.Date;
+            return GetPolls(dbContext).Where(p => DbFunctions.TruncateTime(p.Date) == date);
         }
 
         public async Task AddToPoll(DatabaseContext dbContext, LunchPoll poll, User user)
@@ -180,55 +262,6 @@ namespace Website.Controllers.API
             LunchHub.OnPollChanged(new LunchPollViewModel(poll));
         }
 
-        [Route("Vote")]
-        [HttpPut]
-        public async Task<bool> Vote([FromBody]LunchVoteViewModel vote)
-        {
-            using (var dbContext = new DatabaseContext())
-            {
-                if (vote.Score > 1 || vote.Score < -1)
-                    return false;
-
-                var user = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
-                var option = await GetOrAddOption(dbContext, vote.OptionName);
-
-                var poll = await GetPolls(dbContext).SingleAsync(p => p.Id == vote.PollId);
-
-                var currentVote = poll.Votes.SingleOrDefault(v => v.User == user && v.Option == option);
-                if ((currentVote?.Score ?? 0) == vote.Score)
-                {
-                    await dbContext.SaveChangesAsync();
-                    return true;
-                }
-
-                if (vote.Score == 0)
-                {
-                    dbContext.LunchVotes.Remove(currentVote);
-                }
-                else if (currentVote != null)
-                {
-                    currentVote.Score = vote.Score;
-                }
-                else
-                {
-                    dbContext.LunchVotes.Add(new LunchVote
-                    {
-                        Poll = poll,
-                        Option = option,
-                        User = user,
-                        Score = vote.Score
-                    });
-                }
-                if (!poll.Voters.Contains(user))
-                    poll.Voters.Add(user);
-                await dbContext.SaveChangesAsync();
-
-                LunchHub.OnVote(poll.Id, option, poll.Votes.Where(v => v.Option == option));
-
-                return true;
-            }
-        }
-
         public async Task<LunchOption> GetOrAddOption(DatabaseContext dbContext, string name)
         {
             var option = await dbContext.LunchOptions.SingleOrDefaultAsync(o => o.Name == name);
@@ -240,13 +273,5 @@ namespace Website.Controllers.API
             return option;
         }
 
-        [Route("Options/{q?}")]
-        public IEnumerable<LunchOption> GetOptions(string q = "")
-        {
-            using (var dbContext = new DatabaseContext())
-            {
-                return dbContext.LunchOptions.Where(o => o.Name.Contains(q)).ToList();
-            }
-        }
     }
 }
