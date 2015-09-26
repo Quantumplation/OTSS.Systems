@@ -56,11 +56,13 @@ var LunchOption = React.createClass({
 
 var PollInfo = React.createClass({
     render: function () {
-        var inPoll = this.props.userInPoll;
-        if (!inPoll) var notification = <strong className="text-danger">Only members are allowed to vote.</strong>
+        var goon = this.props.userIsGoon,
+            inPoll = this.props.userInPoll;
+        if (goon) var notification = <strong className="text-danger">Only approved OTSS members may freely join lunch crews.</strong>
+        else if (!inPoll) var notification = <strong className="text-danger">Only members are allowed to vote.</strong>
         var button = inPoll
             ? <button onClick={this.props.leave} className="btn btn-default" type="button">Leave Crew</button>
-            : <button onClick={this.props.join} className="btn btn-default" type="button">Join Crew</button>;
+            : <button onClick={this.props.join} disabled={goon} className="btn btn-default" type="button">Join Crew</button>;
         var text = "(" + this.props.Voters.length + " member" + (this.props.Voters.length == 1 ? "" : "s") + ")";
         var voters = this.props.Voters.join("\n");
         return (
@@ -91,6 +93,7 @@ var Poll = React.createClass({
             leaveThis = function () { api.leave(id); };
 
         var username = this.props.username,
+            userIsGoon = this.props.userIsGoon,
             userInPoll = this.props.Info.Voters.indexOf(username) > -1;
 
         var options = Object.keys(this.props.Options).map(function (opId) {
@@ -104,7 +107,7 @@ var Poll = React.createClass({
         });
         return (
             <div>
-                <PollInfo {...this.props.Info} userInPoll={userInPoll} join={joinThis} leave={leaveThis} />
+                <PollInfo {...this.props.Info} userIsGoon={userIsGoon} userInPoll={userInPoll} join={joinThis} leave={leaveThis} />
                 <div className="row text-center">
                     <div id="suggestions" className="col-md-12">
                         {options}
@@ -210,7 +213,7 @@ var Page = React.createClass({
         var current = self.state.polls[self.state.selected];
 
         var poll = (current)
-            ? <Poll {...current} api={this.api} username={this.props.username} />
+            ? <Poll {...current} api={this.api} username={this.props.username} userIsGoon={this.props.userIsGoon} />
             : <div className="alert alert-info">Create or join a lunch crew to start voting</div>;
 
         var optionFormStyle = current
@@ -227,14 +230,16 @@ var Page = React.createClass({
                 </NavbarItem>
             );
         });
-        var newPollFocus = function () { $("#new-poll").focus(); };
-        navItems.push(
-            <NavbarItem key="new" onClick={newPollFocus}>
-                <form onSubmit={self.createPoll}>
-                    <input id="new-poll" type="text" placeholder="New Crew" />
-                </form>
-            </NavbarItem>
-        );
+        if (!this.props.userIsGoon) {
+            var newPollFocus = function () { $("#new-poll").focus(); };
+            navItems.push(
+                <NavbarItem key="new" onClick={newPollFocus}>
+                    <form onSubmit={self.createPoll}>
+                        <input id="new-poll" type="text" placeholder="New Crew" />
+                    </form>
+                </NavbarItem>
+            );
+        };
 
         return (
             <div className="row">

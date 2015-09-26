@@ -11,6 +11,7 @@
 @Html.React("Page", new
 {
     username = User.Identity.Name,
+    userIsGoon = User.IsInRole("Goon"),
     initialPolls = Model.ToDictionary(p => p.Id),
     initialSelected = currentId
 })
