@@ -253,6 +253,10 @@
     <Compile Include="Migrations\201508292143428_LunchCrews.Designer.cs">
       <DependentUpon>201508292143428_LunchCrews.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201510120449112_Dummy1.cs" />
+    <Compile Include="Migrations\201510120449112_Dummy1.Designer.cs">
+      <DependentUpon>201510120449112_Dummy1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Database.cs" />
     <Compile Include="Models\InviteKey.cs" />
@@ -385,6 +389,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201508292143428_LunchCrews.resx">
       <DependentUpon>201508292143428_LunchCrews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201510120449112_Dummy1.resx">
+      <DependentUpon>201510120449112_Dummy1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
