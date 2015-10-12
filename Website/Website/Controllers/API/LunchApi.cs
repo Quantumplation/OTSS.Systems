@@ -54,9 +54,11 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
+                if (string.IsNullOrWhiteSpace(name))
+                    return BadRequest().WithReason("A name is required");
+
                 var exists = await GetPolls(dbContext, DateTime.Now)
                     .AnyAsync(p => p.Name == name);
-
                 if (exists)
                     return StatusCode(HttpStatusCode.Conflict)
                         .WithReason("A poll with the same name already exists");
@@ -120,15 +122,24 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
+                if (vote == null)
+                    return StatusCode(HttpStatusCode.BadRequest).WithReason("What the fuck are you doing");
                 if (vote.Score > 1 || vote.Score < -1)
                     return StatusCode(HttpStatusCode.Forbidden).WithReason("Stop fucking with the votes.");
-
-                var user = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
-                var option = await GetOrAddOption(dbContext, vote.Name);
 
                 var poll = await GetPoll(dbContext, id);
                 if (poll == null)
                     return NotFound().WithReason("No poll found with the given id.");
+                if (poll.Date.Date != DateTime.Now.Date)
+                    return StatusCode(HttpStatusCode.Forbidden).WithReason("Stop fucking with the past.");
+
+                var user = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
+                if (!poll.Voters.Contains(user))
+                    return StatusCode(HttpStatusCode.Forbidden).WithReason("Only members are allowed to vote.");
+
+                if (string.IsNullOrWhiteSpace(vote.Name))
+                    return StatusCode(HttpStatusCode.BadRequest).WithReason("Lunch option not specified");
+                var option = await GetOrAddOption(dbContext, vote.Name);
 
 
                 var currentVote = poll.Votes.SingleOrDefault(v => v.User == user && v.Option == option);
@@ -156,8 +167,6 @@ namespace Website.Controllers.API
                         Score = vote.Score
                     });
                 }
-                if (!poll.Voters.Contains(user))
-                    poll.Voters.Add(user);
                 await dbContext.SaveChangesAsync();
 
                 LunchHub.OnVote(poll.Id, option, poll.Votes.Where(v => v.Option == option));
@@ -213,6 +222,7 @@ namespace Website.Controllers.API
             {
                 var poll = await GetPoll(dbContext, id);
                 if (poll == null) return NotFound().WithReason("No poll found with the given id.");
+                if (string.IsNullOrWhiteSpace(decision)) return BadRequest().WithReason("Lunch option not specified");
                 poll.Decision = await GetOrAddOption(dbContext, decision);
 
                 await dbContext.SaveChangesAsync();
@@ -227,6 +237,8 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
+                if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(newName))
+                    return BadRequest().WithReason("Lunch option not specified");
                 var oldOption = await dbContext.LunchOptions.Where(o => o.Name == name).SingleOrDefaultAsync();
                 if (oldOption == null)
                     return NotFound();
