@@ -5,11 +5,12 @@
             : "btn btn-default";
         var imgurl = "Content/" + this.props.image;
         return (
-            <a href="#" onClick={this.props.vote} role="button" className={clazz} aria-pressed={this.props.userVotedForThis} disabled={!this.props.userInPoll}>
+            <a href="#" onClick={this.vote} role="button" className={clazz} aria-pressed={this.props.userVotedForThis} disabled={!this.props.userInPoll}>
                 <img src={imgurl} width="32" height="32"/>
             </a>
         );
-    }
+    },
+    vote: function() { this.props.vote(!this.props.userVotedForThis ? this.props.score : 0) }
 });
 
 var LunchOption = React.createClass({
@@ -20,10 +21,10 @@ var LunchOption = React.createClass({
         var userUpvoted = props.Upvotes.indexOf(props.username) > -1,
             userDownvoted = props.Downvotes.indexOf(props.username) > -1;
 
-        var upvoteButton = <LunchOptionButton vote={upvote} activeClass={"btn-success"} image={"thumbsup.png"}
-                                              userVotedForThis={userUpvoted} userInPoll={props.userInPoll} />,
-            downvoteButton = <LunchOptionButton vote={downvote} activeClass={"btn-danger"} image={"thumbsdown.png"}
-                                                userVotedForThis={userDownvoted} userInPoll={props.userInPoll} />;
+        var upvoteButton = <LunchOptionButton score={1} activeClass={"btn-success"} image={"thumbsup.png"}
+                                              userVotedForThis={userUpvoted} userInPoll={props.userInPoll} vote={props.voteForThis} />,
+            downvoteButton = <LunchOptionButton score={-1} activeClass={"btn-danger"} image={"thumbsdown.png"}
+                                                userVotedForThis={userDownvoted} userInPoll={props.userInPoll} vote={props.voteForThis} />;
 
         return (
             <div className="row">
@@ -144,7 +145,7 @@ var Page = React.createClass({
 
         lunchHub.client.onVote = function (option) {
             var newPolls = $.extend(true, {}, self.state.polls);
-            if (option.Score !== 0)
+            if (option.Upvotes.length !== 0 || option.Downvotes.length !== 0)
                 newPolls[option.PollId].Options[option.Id] = option;
             else
                 delete newPolls[option.PollId].Options[option.Id];
