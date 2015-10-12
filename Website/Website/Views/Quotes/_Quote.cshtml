@@ -1,11 +1,12 @@
 ﻿@using System.Globalization
+@using APIExtensions = Website.APIExtensions;
 @model Website.ViewModels.Web.QuoteViewModel
 <div class="quote" style="border-width:1px;border-color:black;border-style:solid;padding:3px;">
     @Model.Text
     <br />
     - @Model.Author
     <br />
-    (Submitted by @Model.Submitter on @Model.CreatedAt.ToString(CultureInfo.CurrentCulture))
+    (Submitted by @Model.Submitter on @Model.CreatedAt.ToString(CultureInfo.CurrentCulture) (@(APIExtensions.ToPrettyInterval(Model.CreatedAt))
     <br/>
     Tags:
     @foreach (var tag in Model.Tags)

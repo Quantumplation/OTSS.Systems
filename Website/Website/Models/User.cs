@@ -11,6 +11,7 @@ namespace Website.Models
         public virtual ICollection<Quote> AuthoredQuotes { get; set; }
         public virtual ICollection<Quote> SubmittedQuotes { get; set; }
 
-        public virtual ICollection<LunchVote> LunchVotes { get; set; }
+        public ICollection<LunchPoll> LunchPolls { get; set; }
+        public ICollection<LunchVote> LunchVotes { get; set; }
     }
 }

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using IHttpActionResult = System.Web.Http.IHttpActionResult;
 using Website.Models;
 using Website.ViewModels.Web;
 
@@ -15,51 +17,85 @@ namespace Website.Controllers.Web
     [Authorize]
     public class LunchController : Controller
     {
+        private readonly API.LunchController LunchAPI;
+
+        public LunchController()
+        {
+            LunchAPI = DependencyResolver.Current.GetService<API.LunchController>();
+            LunchAPI.Request = new System.Net.Http.HttpRequestMessage();
+        }
+         
         [Route("")]
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
+        {
+            return View((await LunchAPI.GetPolls(DateTime.Now)).ToList());
+        }
+
+        [Authorize(Roles = "Lunch Administrator")]
+        [HttpGet, Route("Management")]
+        public ActionResult Management(LunchAdministrationTaskEnum task = LunchAdministrationTaskEnum.EnterLunchDecision)
         {
             using (var dbContext = new DatabaseContext())
             {
-                return View(new LunchPollViewModel(GetDailyPoll(dbContext), User.Identity.Name));
+                var polls = LunchAPI.GetPolls(dbContext, DateTime.Now);
+                return View("Management", new LunchAdministrationViewModel(polls, task));
             }
         }
 
         [Authorize(Roles = "Lunch Administrator")]
-        [HttpGet, Route("Decision")]
-        public ActionResult EnterDecision()
+        [Route(nameof(LunchAdministrationTaskEnum.EnterLunchDecision))]
+        public Task<ActionResult> EnterLunchDecision(LunchAdministrationViewModel model)
         {
-            return View();
+            return Do(LunchAPI.Decide(model.PollId, model.OptionName));
         }
 
         [Authorize(Roles = "Lunch Administrator")]
-        [HttpPost, Route("Decision")]
-        public async Task<ActionResult> EnterDecision(LunchOption option)
+        [Route(nameof(LunchAdministrationTaskEnum.AddUserToLunch))]
+        public Task<ActionResult> AddUserToLunch(LunchAdministrationViewModel model)
         {
-            using (var dbContext = new DatabaseContext())
-            {
-                var poll = GetDailyPoll(dbContext);
-                poll.Decision = await new API.LunchController().GetOrAddOption(dbContext, option.Name);
-                await dbContext.SaveChangesAsync();
+            return Do(LunchAPI.AddToPoll(model.PollId, model.UserName));
+        }
+
+        [Authorize(Roles = "Lunch Administrator")]
+        [Route(nameof(LunchAdministrationTaskEnum.RemoveUserFromLunch))]
+        public Task<ActionResult> RemoveUserFromLunch(LunchAdministrationViewModel model)
+        {
+            return Do(LunchAPI.RemoveFromPoll(model.PollId, model.UserName));
+        }
+
+        [Authorize(Roles = "Lunch Administrator")]
+        [Route(nameof(LunchAdministrationTaskEnum.RenameOption))]
+        public Task<ActionResult> RenameOption(LunchAdministrationViewModel model)
+        {
+            return Do(LunchAPI.RenameOption(model.OptionName, model.NewOptionName));
+        }
+
+        [Authorize(Roles = "Lunch Administrator")]
+        [Route(nameof(LunchAdministrationTaskEnum.DeleteOption))]
+        public Task<ActionResult> DeleteOption(LunchAdministrationViewModel model)
+        {
+            return Do(LunchAPI.DeleteOption(model.OptionName));
+        }
+
+        [Authorize(Roles = "Lunch Administrator")]
+        [Route(nameof(LunchAdministrationTaskEnum.DeletePoll))]
+        public Task<ActionResult> DeletePoll(LunchAdministrationViewModel model)
+        {
+            return Do(LunchAPI.DeletePoll(model.PollId));
+        }
+
+        private async Task<ActionResult> Do(Task<IHttpActionResult> action)
+        {
+            var result = await (await action).ExecuteAsync(new CancellationToken());
+            if (result.IsSuccessStatusCode)
                 return RedirectToAction("Index");
-            }
-        }
+            ModelState.AddModelError("", result.ReasonPhrase);
 
-        private LunchPoll GetDailyPoll(DatabaseContext dbContext)
-        {
-            var now = DateTime.Now.Date;
-            var poll = dbContext.LunchPolls
-                .Include(p => p.Votes.Select(v => v.User))
-                .Include(p => p.Votes.Select(v => v.Option))
-                .SingleOrDefault(lp => DbFunctions.TruncateTime(lp.Date) == now);
-            if (poll != null) return poll;
-
-            dbContext.LunchPolls.Add(poll = new LunchPoll
-            {
-                Date = DateTime.Now,
-                Votes = new List<LunchVote>()
-            });
-            dbContext.SaveChanges();
-            return poll;
+            LunchAdministrationTaskEnum task;
+            var taskName = ControllerContext.RouteData.Values["action"].ToString();
+            if (!Enum.TryParse(taskName, out task))
+                task = LunchAdministrationTaskEnum.EnterLunchDecision;
+            return Management(task);
         }
     }
 }

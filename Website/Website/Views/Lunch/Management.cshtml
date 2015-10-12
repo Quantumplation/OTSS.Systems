@@ -1,0 +1,100 @@
+﻿@using System.Linq.Expressions;
+@using Website.ViewModels.Web;
+@model LunchAdministrationViewModel
+
+<h3>Lunch Administration</h3>
+@Html.ValidationSummary()
+
+<div class="form-group">
+    @Html.Label("Task", "Administration Task")
+    @Html.DropDownList("Task", Model.AdministrationTasks, new { id = "task-selector", @class = "form-control" })
+</div>
+
+@using (Html.BeginForm("EnterLunchDecision", "Lunch", FormMethod.Post, new { id = "EnterLunchDecision", style = "display: none;" }))
+{
+    @PollSelector()
+    @OptionSelector(m => m.OptionName, "Decision")
+    @SubmitButton("Enter")
+}
+
+@using (Html.BeginForm("AddUserToLunch", "Lunch", FormMethod.Post, new { id = "AddUserToLunch", style = "display: none;" }))
+{
+    @PollSelector()
+    @UserSelector()
+    @SubmitButton("Add")
+}
+
+@using (Html.BeginForm("RemoveUserFromLunch", "Lunch", FormMethod.Post, new { id = "RemoveUserFromLunch", style = "display: none;" }))
+{
+    @PollSelector()
+    @UserSelector()
+    @SubmitButton("Remove")
+}
+
+@using (Html.BeginForm("RenameOption", "Lunch", FormMethod.Post, new { id = "RenameOption", style = "display: none;" }))
+{
+    @OptionSelector(m => m.OptionName, "Old Name")
+    @OptionSelector(m => m.NewOptionName, "New Name")
+    <p class="help-block">
+        If an option with the new name exists,
+        any votes for the old option will be transferred to the new one.
+    </p>
+    @SubmitButton("Rename")
+}
+
+@using (Html.BeginForm("DeleteOption", "Lunch", FormMethod.Post, new { id = "DeleteOption", style = "display: none;" }))
+{
+    @OptionSelector(m => m.OptionName, "Option")
+    @SubmitButton("Delete")
+}
+
+@using (Html.BeginForm("DeletePoll", "Lunch", FormMethod.Post, new { id = "DeletePoll", style = "display: none;" }))
+{
+    @PollSelector()
+    @SubmitButton("Delete")
+}
+
+@section Scripts {
+    <script src="~/Scripts/typeahead.jquery.js"></script>
+    <script src="~/Scripts/bloodhound.js"></script>
+    <script src="~/Scripts/lunch.js"></script>
+
+    <script>
+        $(function () {
+            function selectTask(id) {
+                $('.body-content form').each(function () {
+                    $(this).toggle($(this).attr("id") === id);
+                });
+            };
+            $('#task-selector').change(function () {
+                selectTask($(this).val());
+            }).change();
+        });
+    </script>
+}
+
+
+@helper PollSelector() {
+    <div class="form-group">
+        @Html.LabelFor(m => m.PollId, "Crew")
+        @Html.DropDownListFor(m => m.PollId, Model.LunchPolls, new { @class = "form-control" })
+    </div>
+}
+
+@helper UserSelector() {
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName, "User")
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+    </div>
+}
+
+@helper OptionSelector(Expression<Func<LunchAdministrationViewModel, string>> expr, string name) {
+    <div class="form-group">
+        @Html.LabelFor(expr, name)
+        @Html.TextBoxFor(expr, new { @class = "form-control lunch-option" })
+    </div>
+}
+
+@helper SubmitButton(string text) {
+    <button type="submit" class="btn btn-default">@text</button>
+}

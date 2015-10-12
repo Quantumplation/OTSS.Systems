@@ -155,6 +155,9 @@ Website/Website/Content/bootstrap.css.map
 #Connection Strings
 ConnectionStrings.config
 
+#React and its various packages
+Website/Website/Scripts/react/*
+
 # =========================
 # Windows detritus
 # =========================
