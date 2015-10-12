@@ -12,6 +12,27 @@ namespace Website
 {
     public static class APIExtensions
     {
+        public static string ToPrettyInterval(this DateTime time)
+        {
+            var now = DateTime.Now;
+            var interval = now - time;
+            var years = interval.Days / 365; // close enough
+            var months = interval.Days / 30; // fuck a september, april, june, november, and february
+            if (years > 0)
+                return $"{years} year{(years > 1 ? "s" :"")} ago";
+            if (months > 0)
+                return $"{months} month{(months > 1 ? "s" : "")} ago";
+            if (interval.Days > 0)
+                return $"{interval.Days} day{(interval.Days > 1 ? "s" : "")} ago";
+            if (interval.Hours > 0)
+                return $"{interval.Hours} hour{(interval.Hours > 1 ? "s" : "")} ago";
+            if (interval.Minutes > 0)
+                return $"{interval.Minutes} minute{(interval.Minutes > 1 ? "s" : "")} ago";
+            return interval.Seconds > 15
+                ? "less than a minute ago"
+                : "just now";
+        }
+
         public static string GetDisplayName(this Enum val)
         {
             var member = val.GetType().GetMember(val.ToString())[0];
