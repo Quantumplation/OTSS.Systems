@@ -31,7 +31,7 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
+                var poll = await GetPoll(dbContext, id);
                 return poll != null
                     ? new LunchPollViewModel(poll)
                     : null;
@@ -57,7 +57,9 @@ namespace Website.Controllers.API
                 var exists = await GetPolls(dbContext, DateTime.Now)
                     .AnyAsync(p => p.Name == name);
 
-                if (exists) return Ok();
+                if (exists)
+                    return StatusCode(HttpStatusCode.Conflict)
+                        .WithReason("A poll with the same name already exists");
 
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
                 var poll = new LunchPoll
@@ -85,8 +87,8 @@ namespace Website.Controllers.API
             {
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
 
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return NotFound();
+                var poll = await GetPoll(dbContext, id);
+                if (poll == null) return NotFound().WithReason("No poll found with the given id.");
 
                 await AddToPoll(dbContext, poll, currentUser);
 
@@ -101,8 +103,8 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return NotFound();
+                var poll = await GetPoll(dbContext, id);
+                if (poll == null) return NotFound().WithReason("No poll found with the given id.");
 
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
                 RemoveFromPoll(dbContext, poll, currentUser);
@@ -119,14 +121,14 @@ namespace Website.Controllers.API
             using (var dbContext = new DatabaseContext())
             {
                 if (vote.Score > 1 || vote.Score < -1)
-                    return StatusCode(HttpStatusCode.Forbidden);
+                    return StatusCode(HttpStatusCode.Forbidden).WithReason("Stop fucking with the votes.");
 
                 var user = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
                 var option = await GetOrAddOption(dbContext, vote.Name);
 
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
+                var poll = await GetPoll(dbContext, id);
                 if (poll == null)
-                    return NotFound();
+                    return NotFound().WithReason("No poll found with the given id.");
 
 
                 var currentVote = poll.Votes.SingleOrDefault(v => v.User == user && v.Option == option);
@@ -171,10 +173,10 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return NotFound();
+                var poll = await GetPoll(dbContext, id);
+                if (poll == null) return NotFound().WithReason("No poll found with the given id.");
                 var user = await dbContext.Users.SingleOrDefaultAsync(p => p.UserName == username);
-                if (user == null) return NotFound();
+                if (user == null) return NotFound().WithReason("No user found with the given name.");
 
                 await AddToPoll(dbContext, poll, user);
 
@@ -190,10 +192,10 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return NotFound();
+                var poll = await GetPoll(dbContext, id);
+                if (poll == null) return NotFound().WithReason("No poll found with the given id.");
                 var user = await dbContext.Users.SingleOrDefaultAsync(p => p.UserName == username);
-                if (user == null) return NotFound();
+                if (user == null) return NotFound().WithReason("No user found with the given name.");
 
                 RemoveFromPoll(dbContext, poll, user);
 
@@ -209,9 +211,109 @@ namespace Website.Controllers.API
         {
             using (var dbContext = new DatabaseContext())
             {
-                var poll = await GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
-                if (poll == null) return NotFound();
+                var poll = await GetPoll(dbContext, id);
+                if (poll == null) return NotFound().WithReason("No poll found with the given id.");
                 poll.Decision = await GetOrAddOption(dbContext, decision);
+
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [Route("Options/{name}/Rename")]
+        [HttpPut]
+        [ApiAuthorize(Roles = "Lunch Administrator")]
+        public async Task<IHttpActionResult> RenameOption(string name, string newName)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var oldOption = await dbContext.LunchOptions.Where(o => o.Name == name).SingleOrDefaultAsync();
+                if (oldOption == null)
+                    return NotFound();
+
+                var newOption = await dbContext.LunchOptions.SingleOrDefaultAsync(o => o.Name == newName);
+                if (newOption == null)
+                {
+                    // easy, literally rename the old option
+                    oldOption.Name = newName;
+                }
+                else
+                {
+                    // replace all references to the old one with references to the new
+                    // this could mess with scores
+                    foreach (var poll in GetPolls(dbContext).Where(p => p.Decision.Id == oldOption.Id))
+                        poll.Decision = newOption;
+
+                    var oldVotes = await dbContext.LunchVotes
+                        .Include(v => v.Poll).Include(v => v.User)
+                        .Where(v => v.Option.Id == oldOption.Id)
+                        .ToListAsync();
+                    var newVotes = await dbContext.LunchVotes
+                        .Include(v => v.Poll).Include(v => v.User)
+                        .Where(v => v.Option.Id == newOption.Id)
+                        .ToDictionaryAsync(v => new { v.Poll, v.User });
+
+                    var toAdd =
+                        from old in oldVotes
+                        where !newVotes.ContainsKey(new { old.Poll, old.User })
+                        select new LunchVote
+                        {
+                            Poll = old.Poll,
+                            User = old.User,
+                            Option = newOption,
+                            Score = old.Score
+                        };
+
+                    dbContext.LunchVotes.AddRange(toAdd);
+                    dbContext.LunchVotes.RemoveRange(oldVotes);
+                    dbContext.LunchOptions.Remove(oldOption);
+                }
+
+
+                // Refresh all of today's polls in case any scores have changed
+                foreach (var poll in GetPolls(dbContext, DateTime.Now))
+                    LunchHub.OnPollChanged(new LunchPollViewModel(poll));
+
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [Route("Options/{name}")]
+        [HttpDelete]
+        [ApiAuthorize(Roles = "Lunch Administrator")]
+        public async Task<IHttpActionResult> DeleteOption(string name)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var option = await dbContext.LunchOptions.Where(o => o.Name == name).SingleOrDefaultAsync();
+                if (option == null)
+                    return NotFound();
+
+                foreach (var poll in GetPolls(dbContext).Where(p => p.Decision.Id == option.Id))
+                    poll.Decision = null;
+                dbContext.LunchOptions.Remove(option);
+
+                LunchHub.OnOptionDeleted(option.Id);
+
+                await dbContext.SaveChangesAsync();
+                return Ok();
+            }
+        }
+
+        [Route("{id}")]
+        [HttpDelete]
+        [ApiAuthorize(Roles = "Lunch Administrator")]
+        public async Task<IHttpActionResult> DeletePoll(int id)
+        {
+            using (var dbContext = new DatabaseContext())
+            {
+                var poll = await GetPoll(dbContext, id);
+                if (poll == null)
+                    return NotFound();
+                dbContext.LunchPolls.Remove(poll);
+
+                LunchHub.OnPollDeleted(id);
 
                 await dbContext.SaveChangesAsync();
                 return Ok();
@@ -230,6 +332,11 @@ namespace Website.Controllers.API
         {
             date = date.Date;
             return GetPolls(dbContext).Where(p => DbFunctions.TruncateTime(p.Date) == date);
+        }
+
+        public Task<LunchPoll> GetPoll(DatabaseContext dbContext, int id)
+        {
+            return GetPolls(dbContext).SingleOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task AddToPoll(DatabaseContext dbContext, LunchPoll poll, User user)

@@ -1,5 +1,5 @@
-﻿
-var lunchAutocomplete = (function () {
+﻿// initialize lunch option autocomplete
+$(function () {
     var hound = new Bloodhound({
         remote: {
             url: "../api/Lunch/Options/%QUERY",
@@ -17,13 +17,11 @@ var lunchAutocomplete = (function () {
         }
     });
     hound.initialize();
-    return function (selector) {
-        $(selector).typeahead({
-            minLength: 1,
-            highlight: true
-        }, {
-            source: hound.ttAdapter(),
-            display: "Name"
-        });
-    }
-})();
+    $("input.lunch-option").typeahead({
+        minLength: 1,
+        highlight: true
+    }, {
+        source: hound.ttAdapter(),
+        display: "Name"
+    });
+});

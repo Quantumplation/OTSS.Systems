@@ -29,5 +29,17 @@ namespace Website.Hubs
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
             hubContext.Clients.All.OnPollChanged(model);
         }
+
+        public static void OnOptionDeleted(int id)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
+            hubContext.Clients.All.OnOptionDeleted(id);
+        }
+
+        public static void OnPollDeleted(int id)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<LunchHub>();
+            hubContext.Clients.All.OnPollDeleted(id);
+        }
     }
 }

@@ -221,6 +221,7 @@
     <Compile Include="Controllers\Web\QuotesController.cs" />
     <Compile Include="Controllers\Web\UserController.cs" />
     <Compile Include="Controllers\Web\HomeController.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -267,7 +268,7 @@
     <Compile Include="ViewModels\Web\Admin\ResetPasswordViewModel.cs" />
     <Compile Include="ViewModels\API\LunchOptionViewModel.cs" />
     <Compile Include="ViewModels\API\LunchPollViewModel.cs" />
-    <Compile Include="ViewModels\Web\Lunch\EnterLunchDecisionViewModel.cs" />
+    <Compile Include="ViewModels\Web\Lunch\LunchAdministrationViewModel.cs" />
     <Compile Include="ViewModels\Web\Quotes\QuoteListViewModel.cs" />
     <Compile Include="ViewModels\Web\Shared\TagViewModel.cs" />
     <Compile Include="ViewModels\Web\Users\ManageUserViewModel.cs" />
@@ -344,11 +345,11 @@
     <Content Include="Views\Home\SignalRSample.cshtml" />
     <Content Include="Views\Admin\AddRole.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
-    <Content Include="Views\Lunch\EnterDecision.cshtml" />
     <Content Include="Views\Admin\ResetPassword.cshtml" />
     <Content Include="Views\Admin\DeleteUser.cshtml" />
     <Content Include="Views\Lunch\Index.cshtml" />
     <Content Include="Scripts\lms.jsx" />
+    <Content Include="Views\Lunch\Management.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -29,7 +29,7 @@ var LunchOption = React.createClass({
             <div className="row">
                 <div className="col-xs-12">
                     <div className="panel panel-default">
-                        <div className="lunch-option panel-body vertical-align">
+                        <div className="panel-body vertical-align">
                             <div className="col-xs-2">
                                 <span className="h3">{props.Score}</span><br />
                                 {this.displayVotes("+", props.Upvotes)}/{this.displayVotes("-", props.Downvotes)}
@@ -58,8 +58,10 @@ var PollInfo = React.createClass({
     render: function () {
         var goon = this.props.userIsGoon,
             inPoll = this.props.userInPoll;
-        if (goon) var notification = <strong className="text-danger">Only approved OTSS members may freely join lunch crews.</strong>
-        else if (!inPoll) var notification = <strong className="text-danger">Only members are allowed to vote.</strong>
+        if (!inPoll)
+            var notification = (goon)
+                ? <strong className="text-danger">Only approved OTSS members may freely join lunch crews.</strong>
+                : <strong className="text-danger">Only members are allowed to vote.</strong>
         var button = inPoll
             ? <button onClick={this.props.leave} className="btn btn-default" type="button">Leave Crew</button>
             : <button onClick={this.props.join} disabled={goon} className="btn btn-default" type="button">Join Crew</button>;
@@ -158,7 +160,26 @@ var Page = React.createClass({
                     ? poll.Id
                     : self.state.selected
             });
-        }
+        };
+
+        lunchHub.client.onOptionDeleted = function (optionId) {
+            var newPolls = $.extend(true, {}, self.state.polls);
+            for (var id in newPolls) {
+                delete newPolls[id].Options[optionId];
+            }
+            self.setState({ polls: newPolls });
+        };
+
+        lunchHub.client.onPollDeleted = function (id) {
+            var newPolls = $.extend(true, {}, self.state.polls);
+            delete newPolls[id];
+            self.setState({
+                polls: newPolls,
+                selected: self.state.selected === id
+                    ? null
+                    : self.state.selected
+            });
+        };
 
         $.connection.hub.start();
     },
@@ -258,7 +279,7 @@ var Page = React.createClass({
                             <form id="option-form" className="form-inline" style={optionFormStyle} onSubmit={this.suggestOption}>
                                 <div className="form-group">
                                     <div className="input-group">
-                                        <input id="option-box" type="search" maxLength="80" placeholder="Where do we want to eat?" className="form-control" />
+                                        <input id="option-box" type="search" maxLength="80" placeholder="Where do we want to eat?" className="form-control lunch-option" />
                                         <span className="input-group-btn">
                                             <button type="submit" className="btn btn-default">Submit</button>
                                         </span>
