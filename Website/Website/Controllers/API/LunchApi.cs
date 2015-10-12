@@ -91,6 +91,8 @@ namespace Website.Controllers.API
 
                 var poll = await GetPoll(dbContext, id);
                 if (poll == null) return NotFound().WithReason("No poll found with the given id.");
+                if (poll.Date.Date != DateTime.Now.Date)
+                    return StatusCode(HttpStatusCode.Forbidden).WithReason("Stop fucking with the past.");
 
                 await AddToPoll(dbContext, poll, currentUser);
 
@@ -107,6 +109,8 @@ namespace Website.Controllers.API
             {
                 var poll = await GetPoll(dbContext, id);
                 if (poll == null) return NotFound().WithReason("No poll found with the given id.");
+                if (poll.Date.Date != DateTime.Now.Date)
+                    return StatusCode(HttpStatusCode.Forbidden).WithReason("Stop fucking with the past.");
 
                 var currentUser = await dbContext.Users.SingleAsync(u => u.UserName == User.Identity.Name);
                 RemoveFromPoll(dbContext, poll, currentUser);
