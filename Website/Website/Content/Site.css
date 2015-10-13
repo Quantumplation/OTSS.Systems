@@ -86,3 +86,7 @@ hr.xs {
     margin-top: 5px;
     margin-bottom: 10px;
 }
+
+#option-form .form-group {
+    width: 100%;
+}

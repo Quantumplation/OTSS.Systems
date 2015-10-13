@@ -69,8 +69,8 @@ var PollInfo = React.createClass({
         var text = "(" + this.props.Voters.length + " member" + (this.props.Voters.length == 1 ? "" : "s") + ")";
         var voters = this.props.Voters.join("\n");
         return (
-            <div id="current-poll-info" className="row">
-                <div className="col-xs-6 text-left">
+            <div id="current-poll-info" className="row vertical-align">
+                <div className="col-xs-5 text-left">
                     <span className="h2">
                         {this.props.Name}&nbsp;
                         <small className="has-tooltip" data-toggle="tooltip" data-placement="bottom" title={voters} data-original-title={voters}>
@@ -78,8 +78,10 @@ var PollInfo = React.createClass({
                         </small>
                     </span>
                 </div>
-                <div className="col-xs-6 text-right">
+                <div className="col-xs-5 text-right">
                     {notification}
+                </div>
+                <div className="col-xs-2 text-right">
                     {button}
                 </div>
             </div>
@@ -238,7 +240,7 @@ var Page = React.createClass({
             ? <Poll {...current} api={this.api} username={this.props.username} userIsGoon={this.props.userIsGoon} />
             : <div className="alert alert-info">Create or join a lunch crew to start voting</div>;
 
-        var optionFormStyle = current
+        var optionFormStyle = (current && current.Info.Voters.indexOf(self.props.username) > -1)
             ? { }
             : { display: "none" };
 
