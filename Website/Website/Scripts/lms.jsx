@@ -205,7 +205,7 @@ var Page = React.createClass({
     api: {
         vote: function (pollId, name, score) {
             if (!pollId || !name) return;
-            $.ajax("api/Lunch/" + pollId + "/Vote", {
+            $.ajax("/api/Lunch/" + pollId + "/Vote", {
                 method: "PUT",
                 data: {
                     Name: name,
@@ -215,17 +215,17 @@ var Page = React.createClass({
         },
         create: function(name) {
             if (!name) return;
-            $.ajax("api/Lunch/" + name, {
+            $.ajax("/api/Lunch/" + name, {
                 method: "POST"
             });
         },
         join: function (pollId) {
-            $.ajax("api/Lunch/" + pollId + "/Join", {
+            $.ajax("/api/Lunch/" + pollId + "/Join", {
                 method: "PUT"
             });
         },
         leave: function (pollId) {
-            $.ajax("api/Lunch/" + pollId + "/Leave", {
+            $.ajax("/api/Lunch/" + pollId + "/Leave", {
                 method: "PUT"
             });
         }
