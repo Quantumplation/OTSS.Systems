@@ -228,7 +228,7 @@ var Page = React.createClass({
             $.ajax("api/Lunch/" + pollId + "/Leave", {
                 method: "PUT"
             });
-        },
+        }
     },
     render: function () {
         var self = this;
