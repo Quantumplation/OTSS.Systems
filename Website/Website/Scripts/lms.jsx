@@ -60,17 +60,23 @@ var PollInfo = React.createClass({
         var goon = this.props.userIsGoon,
             inPoll = this.props.userInPoll;
         if (!inPoll)
-            var notification = (goon)
-                ? <strong className="text-danger">Only approved OTSS members may freely join lunch crews.</strong>
-                : <strong className="text-danger">Only members are allowed to vote.</strong>
+            var notification = <strong className="text-danger">Only members are allowed to vote.</strong>;
+        var goonMessage = "Only approved OTSS members may freely join lunch crews.";
         var button = inPoll
             ? <button onClick={this.props.leave} className="btn btn-default" type="button">Leave Crew</button>
             : <button onClick={this.props.join} disabled={goon} className="btn btn-default" type="button">Join Crew</button>;
+        if (!inPoll && goon)
+            button = (
+                <div className="has-tooltip disabled-tooltip-wrapper" data-toggle="tooltip" data-placement="bottom" title={goonMessage}>
+                    {button}
+                </div>
+            );
+
         var text = "(" + this.props.Voters.length + " member" + (this.props.Voters.length == 1 ? "" : "s") + ")";
         var voters = this.props.Voters.join("\n");
         return (
             <div id="current-poll-info" className="row vertical-align">
-                <div className="col-xs-5 text-left">
+                <div className="col-xs-6 text-left">
                     <span className="h2">
                         {this.props.Name}&nbsp;
                         <small className="has-tooltip" data-toggle="tooltip" data-placement="bottom" title={voters} data-original-title={voters}>
@@ -78,7 +84,7 @@ var PollInfo = React.createClass({
                         </small>
                     </span>
                 </div>
-                <div className="col-xs-5 text-right">
+                <div className="col-xs-4 text-right">
                     {notification}
                 </div>
                 <div className="col-xs-2 text-right">
