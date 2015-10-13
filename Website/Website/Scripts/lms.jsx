@@ -3,7 +3,7 @@
         var clazz = this.props.userVotedForThis
             ? "btn btn-active " + this.props.activeClass
             : "btn btn-default";
-        var imgurl = "Content/" + this.props.image;
+        var imgurl = "/Content/" + this.props.image;
         return (
             <a href="#" onClick={this.vote} role="button" className={clazz} aria-pressed={this.props.userVotedForThis} disabled={!this.props.userInPoll}>
                 <img src={imgurl} width="32" height="32"/>
