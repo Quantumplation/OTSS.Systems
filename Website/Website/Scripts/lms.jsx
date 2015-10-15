@@ -51,7 +51,7 @@ var LunchOption = React.createClass({
     displayVotes: function (prefix, votes) {
         var title = votes.join("\n");
         var text = prefix + votes.length;
-        return <span className="has-tooltip" data-toggle="tooltip" data-placement="bottom" data-original-title={title} title={title}>{text}</span>
+        return <span className="has-tooltip" data-toggle="tooltip" data-placement="bottom" data-original-title={title}>{text}</span>
     }
 });
 
@@ -67,7 +67,7 @@ var PollInfo = React.createClass({
             : <button onClick={this.props.join} disabled={goon} className="btn btn-default" type="button">Join Crew</button>;
         if (!inPoll && goon)
             button = (
-                <div className="has-tooltip disabled-tooltip-wrapper" data-toggle="tooltip" data-placement="bottom" title={goonMessage}>
+                <div className="has-tooltip disabled-tooltip-wrapper" data-toggle="tooltip" data-placement="bottom" data-original-title={goonMessage}>
                     {button}
                 </div>
             );
@@ -79,7 +79,7 @@ var PollInfo = React.createClass({
                 <div className="col-xs-6 text-left">
                     <span className="h2">
                         {this.props.Name}&nbsp;
-                        <small className="has-tooltip" data-toggle="tooltip" data-placement="bottom" title={voters} data-original-title={voters}>
+                        <small className="has-tooltip" data-toggle="tooltip" data-placement="bottom" data-original-title={voters}>
                             {text}
                         </small>
                     </span>
