@@ -6,7 +6,7 @@
     <br />
     - @Model.Author
     <br />
-    (Submitted by @Model.Submitter on @Model.CreatedAt.ToString(CultureInfo.CurrentCulture) (@(APIExtensions.ToPrettyInterval(Model.CreatedAt))))
+    (Submitted by @Model.Submitter on @Model.CreatedAt.ToLocalTime().ToString(CultureInfo.CurrentCulture) (@(APIExtensions.ToPrettyInterval(Model.CreatedAt))))
     <br/>
     Tags:
     @foreach (var tag in Model.Tags)
