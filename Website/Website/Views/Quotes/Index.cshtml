@@ -25,9 +25,8 @@ All Tags:
 
 @section scripts
 {
-    <script src="~/Scripts/jquery.signalR-2.0.3.min.js"></script>
+    @Scripts.Render("~/bundles/autocomplete", "~/bundles/signalr")
     <script src="~/signalr/hubs"></script>
-    <script src="~/Scripts/typeahead.jquery.js"></script>
     <script>
         $(function () {
             var quoteHub = $.connection.quotesHub;
@@ -35,26 +34,6 @@ All Tags:
                 $(".quotes").prepend(data);
             };
             $.connection.hub.start();
-
-
-            $(".typeahead").typeahead({
-                minLength: 1,
-                highlight: true,
-            }, {
-                name: 'users',
-                source: function (query, cb) {
-                    $.getJSON('/api/Users', null, function (result) {
-                        var results = [];
-                        for (var i in result) {
-                            var entry = result[i].UserName;
-                            if (entry.toLowerCase().indexOf(query.toLowerCase()) > -1)
-                                results.push({ value: entry });
-                        }
-                        cb(results);
-                    });
-                }
-            }
-            );
         });
 
         $("#newQuoteForm").submit(function (event) {

@@ -19,6 +19,17 @@ namespace Website
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/autocomplete").Include(
+                    "~/Scripts/typeahead.jquery.js",
+                    "~/Scripts/bloodhound.js",
+                    "~/Scripts/autocomplete/*.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/signalr").Include(
+                    "~/Scripts/jquery.signalR-{version}.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/react").Include(
+                    "~/Scripts/react/react-{version}.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/typeahead.css",

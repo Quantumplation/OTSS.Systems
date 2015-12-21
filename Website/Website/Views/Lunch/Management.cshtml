@@ -55,9 +55,7 @@
 }
 
 @section Scripts {
-    <script src="~/Scripts/typeahead.jquery.js"></script>
-    <script src="~/Scripts/bloodhound.js"></script>
-    <script src="~/Scripts/lunch.js"></script>
+    @Scripts.Render("~/bundles/autocomplete")
 
     <script>
         $(function () {
@@ -84,7 +82,7 @@
 @helper UserSelector() {
     <div class="form-group">
         @Html.LabelFor(m => m.UserName, "User")
-        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control user-autocomplete" })
     </div>
 }
 

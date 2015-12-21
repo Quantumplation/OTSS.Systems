@@ -1,27 +1,26 @@
-﻿// initialize lunch option autocomplete
+﻿// initialize user autocomplete
 $(function () {
     var hound = new Bloodhound({
-        remote: {
-            url: "../api/Lunch/Options/%QUERY",
-            wildcard: "%QUERY"
+        prefetch: {
+            url: "../api/Users/"
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace("UserName"),
         identify: function (obj) { return obj.Id; },
         sorter: function (a, b) {
-            var an = a.Name.toLowerCase(),
-                bn = b.Name.toLowerCase();
+            var an = a.UserName.toLowerCase(),
+                bn = b.UserName.toLowerCase();
             if (an < bn) return -1;
             if (an > bn) return 1;
             return 0;
         }
     });
     hound.initialize();
-    $("input.lunch-option").typeahead({
+    $("input.user-autocomplete").typeahead({
         minLength: 1,
         highlight: true
     }, {
         source: hound.ttAdapter(),
-        display: "Name"
+        display: "UserName"
     });
 });
