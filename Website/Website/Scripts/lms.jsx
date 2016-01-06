@@ -26,6 +26,22 @@ var LunchOption = React.createClass({
             downvoteButton = <LunchOptionButton score={-1} activeClass={"btn-danger"} image={"thumbsdown.png"}
                                                 userVotedForThis={userDownvoted} userInPoll={props.userInPoll} vote={props.voteForThis} />;
 
+        var btnGroup = (
+            <div className="btn-group btn-group-lg btn-group-justified" role="group">
+                {downvoteButton}
+                {upvoteButton}
+            </div>
+        );
+        if (!props.userInPoll) {
+            var message = "Only members are allowed to vote";
+            btnGroup = (
+                <div className="has-tooltip disabled-tooltip-wrapper" data-toggle="tooltip" data-placement="bottom" data-original-title={message}>
+                    {btnGroup}
+                </div>
+            );
+        }
+
+
         return (
             <div className="row">
                 <div className="col-xs-12">
@@ -37,10 +53,7 @@ var LunchOption = React.createClass({
                             </div>
                             <div className="col-xs-6"><span className="h3">{this.props.Name}</span></div>
                             <div className="col-xs-4">
-                                <div className="btn-group btn-group-lg btn-group-justified" role="group">
-                                    {downvoteButton}
-                                    {upvoteButton}
-                                </div>
+                                {btnGroup}
                             </div>
                         </div>
                     </div>
@@ -59,8 +72,6 @@ var PollInfo = React.createClass({
     render: function () {
         var goon = this.props.userIsGoon,
             inPoll = this.props.userInPoll;
-        if (!inPoll)
-            var notification = <strong className="text-danger">Only members are allowed to vote.</strong>;
         var goonMessage = "Only approved members may freely join lunch crews.";
         var button = inPoll
             ? <button onClick={this.props.leave} className="btn btn-default" type="button">Leave Crew</button>
@@ -76,16 +87,13 @@ var PollInfo = React.createClass({
         var voters = this.props.Voters.join("\n");
         return (
             <div id="current-poll-info" className="row vertical-align">
-                <div className="col-xs-6 text-left">
+                <div className="col-xs-10 text-left">
                     <span className="h2">
                         {this.props.Name}&nbsp;
                         <small className="has-tooltip" data-toggle="tooltip" data-placement="bottom" data-original-title={voters}>
                             {text}
                         </small>
                     </span>
-                </div>
-                <div className="col-xs-4 text-right">
-                    {notification}
                 </div>
                 <div className="col-xs-2 text-right">
                     {button}

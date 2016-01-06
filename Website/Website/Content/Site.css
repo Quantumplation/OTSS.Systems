@@ -61,7 +61,6 @@ input[type="checkbox"].input-validation-error {
 
 .has-tooltip.disabled-tooltip-wrapper {
     cursor: not-allowed;
-    display: inline-block;
 }
 
 .tooltip-inner {
