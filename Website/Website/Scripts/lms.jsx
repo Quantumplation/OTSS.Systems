@@ -61,7 +61,7 @@ var PollInfo = React.createClass({
             inPoll = this.props.userInPoll;
         if (!inPoll)
             var notification = <strong className="text-danger">Only members are allowed to vote.</strong>;
-        var goonMessage = "Only approved OTSS members may freely join lunch crews.";
+        var goonMessage = "Only approved members may freely join lunch crews.";
         var button = inPoll
             ? <button onClick={this.props.leave} className="btn btn-default" type="button">Leave Crew</button>
             : <button onClick={this.props.join} disabled={goon} className="btn btn-default" type="button">Join Crew</button>;

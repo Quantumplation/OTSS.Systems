@@ -26,7 +26,7 @@ namespace Website.Hubs
             var wc = new WebClient();
             var jsonObject = new JObject();
             jsonObject["channel"] = "#banter";
-            jsonObject["username"] = "OTSS.Quotes";
+            jsonObject["username"] = "Various Quotes";
             jsonObject["text"] = $"> {q.Text}\n - {quoteVM.Author} {q.CreatedAt.Year}\n(Created by {q.Submitter.UserName} {q.CreatedAt.ToPrettyInterval()})";
             jsonObject["icon_emoji"] = ":kappa:";
             wc.UploadString(ConfigurationManager.ConnectionStrings["Slack-Banter"].ConnectionString, "POST", jsonObject.ToString());
