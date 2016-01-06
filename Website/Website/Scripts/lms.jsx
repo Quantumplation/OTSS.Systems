@@ -62,7 +62,7 @@ var LunchOption = React.createClass({
         );
     },
     displayVotes: function (prefix, votes) {
-        var title = votes.join("\n");
+        var title = votes.sort().join("\n");
         var text = prefix + votes.length;
         return <span className="has-tooltip" data-toggle="tooltip" data-placement="bottom" data-original-title={title}>{text}</span>
     }
@@ -84,7 +84,7 @@ var PollInfo = React.createClass({
             );
 
         var text = "(" + this.props.Voters.length + " member" + (this.props.Voters.length == 1 ? "" : "s") + ")";
-        var voters = this.props.Voters.join("\n");
+        var voters = this.props.Voters.sort().join("\n");
         return (
             <div id="current-poll-info" className="row vertical-align">
                 <div className="col-xs-10 text-left">
@@ -115,15 +115,17 @@ var Poll = React.createClass({
             userIsGoon = this.props.userIsGoon,
             userInPoll = this.props.Info.Voters.indexOf(username) > -1;
 
-        var options = Object.keys(this.props.Options).map(function (opId) {
-            var option = self.props.Options[opId];
-            var voteForThis = function (score) {
-                api.vote(id, option.Name, score);
-            }
-            return (
-                <LunchOption {...option} key={opId} username={username} userInPoll={userInPoll} voteForThis={voteForThis} />
-            );
-        });
+        var options = Object.keys(this.props.Options)
+            .map(function (opId) { return self.props.Options[opId]; })
+            .sort(function (a, b) { return a.Name.localeCompare(b.Name); })
+            .map(function (option) {
+                var voteForThis = function (score) {
+                    api.vote(id, option.Name, score);
+                }
+                return (
+                    <LunchOption {...option} key={option.Id} username={username} userInPoll={userInPoll} voteForThis={voteForThis} />
+                );
+            });
         return (
             <div>
                 <PollInfo {...this.props.Info} userIsGoon={userIsGoon} userInPoll={userInPoll} join={joinThis} leave={leaveThis} />
